@@ -1,0 +1,199 @@
+import React from "react";
+import { TextInput, TextStyle, TouchableOpacity } from "react-native";
+import { ImageStyle } from "react-native";
+import {
+	StyleSheet,
+	Text,
+	View,
+	ViewStyle,
+	Image,
+	Dimensions,
+} from "react-native";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import { AuthNavProps } from "../src/types/AuthParamList";
+
+const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
+	return (
+		<View style={styles.container}>
+			<View style={styles.header}>
+				<Image source={require("../assets/logo.png")} style={styles.logo} />
+				<Text style={styles.logoText}>Aviate Coders </Text>
+			</View>
+			<Text style={styles.mainText}>Welcome back</Text>
+			<View style={styles.buttonContainer}>
+				<TouchableOpacity
+					onPress={() => console.log("hola")}
+					style={styles.googleButton}
+				>
+					<Image
+						source={require("../assets/google.png")}
+						style={styles.googleIcon}
+					/>
+				</TouchableOpacity>
+				<TouchableOpacity
+					onPress={() => console.log("hola")}
+					style={styles.googleButton}
+				>
+					<AntDesign name="twitter" size={24} color="#5DA9DD" />
+				</TouchableOpacity>
+			</View>
+			<TextInput style={styles.input} placeholder="Email" />
+			<TextInput
+				style={styles.input}
+				placeholder="Password"
+				secureTextEntry={true}
+				autoCapitalize="none"
+			/>
+
+			<TouchableOpacity
+				onPress={() => console.log("hola")}
+				style={styles.signupButton}
+			>
+				<Text style={[styles.btnText]}>Login</Text>
+			</TouchableOpacity>
+			<View style={styles.divider} />
+			<View style={styles.row}>
+				<Text style={styles.redirectText}>Don't have an account?</Text>
+				<TouchableOpacity
+					onPress={() => {
+						navigation.navigate("SignupScreen");
+					}}
+				>
+					<Text style={[styles.redirectTextLink]}>Signup</Text>
+				</TouchableOpacity>
+			</View>
+		</View>
+	);
+};
+
+interface Styles {
+	container: ViewStyle;
+	logo: ImageStyle;
+	header: ViewStyle;
+	logoText: TextStyle;
+	googleButton: ViewStyle;
+	googleIcon: ImageStyle;
+	divider: ViewStyle;
+	mainText: TextStyle;
+	buttonContainer: ViewStyle;
+	input: ViewStyle;
+	signupButton: ViewStyle;
+	btnText: ViewStyle;
+	redirectText: TextStyle;
+	redirectTextLink: ViewStyle;
+	row: ViewStyle;
+}
+
+const { height } = Dimensions.get("screen");
+const height_logo = height * 0.1;
+
+const styles = StyleSheet.create<Styles>({
+	container: {
+		flex: 1,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	logo: {
+		height: height_logo * 0.6,
+		width: height_logo,
+		resizeMode: "contain",
+	},
+	header: {
+		flexDirection: "row",
+		alignItems: "center",
+	},
+	logoText: {
+		fontFamily: "Adamina-Regular",
+		fontWeight: "500",
+		fontSize: 22,
+		color: "black",
+	},
+	googleButton: {
+		width: 131,
+		height: 54,
+		justifyContent: "center",
+		alignItems: "center",
+		borderRadius: 12,
+		backgroundColor: "#ffffff",
+		padding: 10,
+		shadowColor: "rgba(0, 0, 0, 0.1)",
+		shadowOpacity: 0.5,
+		elevation: 10,
+		shadowRadius: 20,
+		shadowOffset: { width: 10, height: 15 },
+	},
+	googleIcon: {
+		height: height_logo * 0.3,
+		width: height_logo,
+		resizeMode: "contain",
+	},
+
+	mainText: {
+		fontFamily: "Adamina-Regular",
+		fontWeight: "500",
+		fontSize: 25,
+		marginTop: 50,
+		color: "black",
+	},
+	buttonContainer: {
+		marginTop: 50,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		width: "80%",
+	},
+	input: {
+		width: "80%",
+		fontSize: 16,
+		fontFamily: "Adamina-Regular",
+		borderRadius: 12,
+		backgroundColor: "#ffffff",
+		padding: 15,
+		shadowColor: "rgba(0, 0, 0, 0.1)",
+		shadowOpacity: 0.5,
+		elevation: 10,
+		shadowRadius: 20,
+		shadowOffset: { width: 10, height: 15 },
+		marginTop: 40,
+		color: "black",
+	},
+	signupButton: {
+		width: "80%",
+		backgroundColor: "#1E2E46",
+		justifyContent: "center",
+		alignItems: "center",
+		borderRadius: 12,
+		marginTop: 40,
+		padding: 12,
+	},
+	btnText: {
+		textAlign: "center",
+		fontSize: 23,
+		fontFamily: "Adamina-Regular",
+		color: "#fff",
+	},
+	divider: {
+		borderWidth: 0.5,
+		borderColor: "black",
+		margin: 10,
+	},
+	redirectText: {
+		fontSize: 18,
+		fontFamily: "Adamina-Regular",
+		color: "black",
+	},
+	redirectTextLink: {
+		fontSize: 18,
+		fontFamily: "Adamina-Regular",
+		color: "purple",
+		// fontWeight: "bold",
+	},
+	row: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		width: "70%",
+	},
+});
+
+export default LoginScreen;
