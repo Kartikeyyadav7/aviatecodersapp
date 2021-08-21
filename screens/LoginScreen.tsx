@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { TextInput, TextStyle, TouchableOpacity } from "react-native";
 import { ImageStyle } from "react-native";
 import {
@@ -10,9 +10,43 @@ import {
 	Dimensions,
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import { AuthNavProps } from "../src/types/AuthParamList";
+import { AuthNavProps } from "../types/AuthParamList";
+import auth from "@react-native-firebase/auth";
 
 const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
+	const [data, setdata] = useState({
+		email: "",
+		password: "",
+	});
+
+	const emailInputChange = (val: string) => {
+		if (val.length !== 0) {
+			setdata({
+				...data,
+				email: val,
+			});
+		} else {
+			setdata({
+				...data,
+				email: val,
+			});
+		}
+	};
+
+	const handlePasswordChange = (val: string) => {
+		setdata({
+			...data,
+			password: val,
+		});
+	};
+
+	const login = async (email: string, password: string) => {
+		try {
+			await auth().signInWithEmailAndPassword(email, password);
+		} catch (e) {
+			console.log(e);
+		}
+	};
 	return (
 		<View style={styles.container}>
 			<View style={styles.header}>
@@ -37,16 +71,21 @@ const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
 					<AntDesign name="twitter" size={24} color="#5DA9DD" />
 				</TouchableOpacity>
 			</View>
-			<TextInput style={styles.input} placeholder="Email" />
+			<TextInput
+				style={styles.input}
+				placeholder="Email"
+				onChangeText={(val) => emailInputChange(val)}
+			/>
 			<TextInput
 				style={styles.input}
 				placeholder="Password"
-				secureTextEntry={true}
+				// secureTextEntry={true}
 				autoCapitalize="none"
+				onChangeText={(val) => handlePasswordChange(val)}
 			/>
 
 			<TouchableOpacity
-				onPress={() => console.log("hola")}
+				onPress={() => login(data.email, data.password)}
 				style={styles.signupButton}
 			>
 				<Text style={[styles.btnText]}>Login</Text>

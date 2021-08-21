@@ -1,3 +1,23 @@
+import React, { useEffect, useReducer } from "react";
+import RNBootSplash from "react-native-bootsplash";
+import Routes from "./navigation/Routes";
+import { defaultState, Provider, reducer } from "./state";
+
+export default function App() {
+	const [state, dispatch] = useReducer(reducer, defaultState);
+
+	useEffect(() => {
+		setInterval(() => {
+			RNBootSplash.hide({ fade: true });
+		}, 500);
+	}, []);
+	return (
+		<Provider value={{ state, dispatch }}>
+			<Routes />
+		</Provider>
+	);
+}
+
 // import React, { useEffect } from "react";
 // import {
 // 	SafeAreaView,
@@ -16,19 +36,6 @@
 // 	LearnMoreLinks,
 // 	ReloadInstructions,
 // } from "react-native/Libraries/NewAppScreen";
-
-import React, { useEffect } from "react";
-import RNBootSplash from "react-native-bootsplash";
-import { AuthStack } from "./src/navigation/AuthStack";
-
-export default function App() {
-	useEffect(() => {
-		setInterval(() => {
-			RNBootSplash.hide({ fade: true });
-		}, 500);
-	}, []);
-	return <AuthStack />;
-}
 
 // const Section: React.FC<{
 // 	title: string;

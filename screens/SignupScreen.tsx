@@ -10,28 +10,34 @@ import {
 	Dimensions,
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import { AuthNavProps } from "../src/types/AuthParamList";
+import auth from "@react-native-firebase/auth";
+import { AuthNavProps } from "../types/AuthParamList";
 
 const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 	const [data, setdata] = useState({
 		name: "",
 		email: "",
 		password: "",
-		check_textInputChange: false,
 	});
 
-	const textInputChange = (val: string) => {
+	const emailInputChange = (val: string) => {
 		if (val.length !== 0) {
 			setdata({
 				...data,
 				email: val,
-				check_textInputChange: true,
+			});
+		}
+	};
+	const nameInputChange = (val: string) => {
+		if (val.length !== 0) {
+			setdata({
+				...data,
+				name: val,
 			});
 		} else {
 			setdata({
 				...data,
-				email: val,
-				check_textInputChange: false,
+				name: val,
 			});
 		}
 	};
@@ -41,6 +47,14 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 			...data,
 			password: val,
 		});
+	};
+
+	const register = async (email: string, password: string) => {
+		try {
+			await auth().createUserWithEmailAndPassword(email, password);
+		} catch (e) {
+			console.log(e);
+		}
 	};
 
 	return (
@@ -76,7 +90,7 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 			<TextInput
 				style={styles.input}
 				placeholder="Name"
-				onChangeText={(val) => textInputChange(val)}
+				onChangeText={(val) => nameInputChange(val)}
 			/>
 			<TextInput
 				style={styles.input}
@@ -85,10 +99,14 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 				autoCapitalize="none"
 				onChangeText={(val) => handlePasswordChange(val)}
 			/>
-			<TextInput style={styles.input} placeholder="Email" />
+			<TextInput
+				style={styles.input}
+				placeholder="Email"
+				onChangeText={(val) => emailInputChange(val)}
+			/>
 			<TouchableOpacity
-				onPress={() => console.log("hola")}
 				style={styles.signupButton}
+				onPress={() => register(data.email, data.password)}
 			>
 				<Text style={styles.btnText}>Sign up</Text>
 			</TouchableOpacity>
