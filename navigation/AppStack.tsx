@@ -1,29 +1,63 @@
 import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { AppParamList } from "../types/AppParamList";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import BookmarkScreen from "../screens/BookmarkScreen";
+import ExploreScreen from "../screens/ExploreScreen";
+
 import HomeScreen from "../screens/HomeScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 
-interface AppStackProps {}
+const Tab = createMaterialBottomTabNavigator();
 
-const Stack = createNativeStackNavigator<AppParamList>();
-
-const AppStack: React.FC<AppStackProps> = ({}) => {
+function AppStack() {
 	return (
-		<Stack.Navigator
-			screenOptions={{
-				header: () => null,
-			}}
-			initialRouteName="HomeScreen"
+		<Tab.Navigator
+			initialRouteName="Home"
+			activeColor="#000"
+			barStyle={{ backgroundColor: "white" }}
 		>
-			<Stack.Screen
-				// options={{
-				//   headerTitle: "Sign In"
-				// }}
-				name="HomeScreen"
+			<Tab.Screen
+				name="Home"
 				component={HomeScreen}
+				options={{
+					tabBarLabel: "Home",
+					tabBarIcon: ({ color }) => (
+						<MaterialIcons name="home" color={color} size={26} />
+					),
+				}}
 			/>
-		</Stack.Navigator>
+			<Tab.Screen
+				name="Search"
+				component={ExploreScreen}
+				options={{
+					tabBarLabel: "Search",
+					tabBarIcon: ({ color }) => (
+						<MaterialIcons name="search" color={color} size={26} />
+					),
+				}}
+			/>
+			<Tab.Screen
+				name="BookMark"
+				component={BookmarkScreen}
+				options={{
+					tabBarLabel: "Bookmarks",
+					tabBarIcon: ({ color }) => (
+						<MaterialIcons name="bookmark-border" color={color} size={26} />
+					),
+				}}
+			/>
+			<Tab.Screen
+				name="Profile"
+				component={ProfileScreen}
+				options={{
+					tabBarLabel: "Profile",
+					tabBarIcon: ({ color }) => (
+						<MaterialIcons name="person" color={color} size={26} />
+					),
+				}}
+			/>
+		</Tab.Navigator>
 	);
-};
+}
 
 export default AppStack;

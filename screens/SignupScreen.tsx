@@ -12,6 +12,7 @@ import {
 import AntDesign from "react-native-vector-icons/AntDesign";
 import auth from "@react-native-firebase/auth";
 import { AuthNavProps } from "../types/AuthParamList";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 	const [data, setdata] = useState({
@@ -57,6 +58,21 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 		}
 	};
 
+	const googleSignin = async () => {
+		try {
+			// Get the users ID token
+			const { idToken } = await GoogleSignin.signIn();
+
+			// Create a Google credential with the token
+			const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+			// Sign-in the user with the credential
+			return auth().signInWithCredential(googleCredential);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 	return (
 		<View style={styles.container}>
 			<View style={styles.header}>
@@ -67,7 +83,7 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 			<Text style={styles.mainText}>Become An Aviated Coder</Text>
 			<View style={styles.buttonContainer}>
 				<TouchableOpacity
-					onPress={() => console.log("hola")}
+					onPress={() => googleSignin()}
 					style={styles.googleButton}
 				>
 					<Image
