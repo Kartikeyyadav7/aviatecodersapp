@@ -9,10 +9,11 @@ import {
 	Image,
 	Dimensions,
 } from "react-native";
-import AntDesign from "react-native-vector-icons/AntDesign";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { AuthNavProps } from "../types/AuthParamList";
 import auth from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { AccessToken, LoginManager } from "react-native-fbsdk-next";
 
 const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
 	const [data, setdata] = useState({
@@ -63,6 +64,38 @@ const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
 			console.log(error);
 		}
 	};
+
+	const fblogin = async () => {
+		try {
+			// Attempt login with permissions
+			const result = await LoginManager.logInWithPermissions([
+				"public_profile",
+				"email",
+			]);
+
+			if (result.isCancelled) {
+				throw "User cancelled the login process";
+			}
+
+			// Once signed in, get the users AccesToken
+			const data = await AccessToken.getCurrentAccessToken();
+
+			if (!data) {
+				throw "Something went wrong obtaining access token";
+			}
+
+			// Create a Firebase credential with the AccessToken
+			const facebookCredential = auth.FacebookAuthProvider.credential(
+				data.accessToken
+			);
+
+			// Sign-in the user with the credential
+			await auth().signInWithCredential(facebookCredential);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 	return (
 		<View style={styles.container}>
 			<View style={styles.header}>
@@ -80,11 +113,8 @@ const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
 						style={styles.googleIcon}
 					/>
 				</TouchableOpacity>
-				<TouchableOpacity
-					onPress={() => console.log("hola")}
-					style={styles.googleButton}
-				>
-					<AntDesign name="twitter" size={24} color="#5DA9DD" />
+				<TouchableOpacity onPress={() => fblogin()} style={styles.googleButton}>
+					<FontAwesome name="facebook" size={24} color="#4866AB" />
 				</TouchableOpacity>
 			</View>
 			<TextInput
