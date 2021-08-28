@@ -1,0 +1,9 @@
+import {
+	REACT_APP_CONTENTFUL_SPACE_ID,
+	REACT_APP_CONTENTFUL_ACCESS_TOKEN,
+} from "@env";
+
+export default devEnvironmentVariables = {
+	REACT_APP_CONTENTFUL_SPACE_ID,
+	REACT_APP_CONTENTFUL_ACCESS_TOKEN,
+};

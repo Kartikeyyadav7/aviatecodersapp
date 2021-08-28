@@ -14,7 +14,16 @@ function AppStack() {
 		<Tab.Navigator
 			initialRouteName="Home"
 			activeColor="#000"
-			barStyle={{ backgroundColor: "white" }}
+			barStyle={{
+				backgroundColor: "#fff",
+				shadowRadius: 2,
+				shadowOffset: {
+					width: 0,
+					height: -3,
+				},
+				shadowColor: "#000000",
+				elevation: 4,
+			}}
 		>
 			<Tab.Screen
 				name="Home"
@@ -24,6 +33,7 @@ function AppStack() {
 					tabBarIcon: ({ color }) => (
 						<MaterialIcons name="home" color={color} size={26} />
 					),
+					title: "Home",
 				}}
 			/>
 			<Tab.Screen

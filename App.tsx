@@ -1,5 +1,6 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import RNBootSplash from "react-native-bootsplash";
+import { SafeAreaView } from "react-native";
 import Routes from "./navigation/Routes";
 import { defaultState, Provider, reducer } from "./state";
 
@@ -11,10 +12,13 @@ export default function App() {
 			RNBootSplash.hide({ fade: true });
 		}, 500);
 	}, []);
+
 	return (
+		// <SafeAreaView>
 		<Provider value={{ state, dispatch }}>
 			<Routes />
 		</Provider>
+		// </SafeAreaView>
 	);
 }
 
