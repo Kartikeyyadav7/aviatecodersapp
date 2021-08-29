@@ -1,18 +1,20 @@
 import React from "react";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import BookmarkScreen from "../screens/BookmarkScreen";
-import ExploreScreen from "../screens/ExploreScreen";
 
-import HomeScreen from "../screens/HomeScreen";
-import ProfileScreen from "../screens/ProfileScreen";
+import {
+	HomeScreenNavigator,
+	BookmarkScreenNavigator,
+	ExploreScreenNavigator,
+	ProfileScreenNavigator,
+} from "./AppInsiderStack";
 
 const Tab = createMaterialBottomTabNavigator();
 
 function AppStack() {
 	return (
 		<Tab.Navigator
-			initialRouteName="Home"
+			initialRouteName="HomeScreen"
 			activeColor="#000"
 			barStyle={{
 				backgroundColor: "#fff",
@@ -26,8 +28,8 @@ function AppStack() {
 			}}
 		>
 			<Tab.Screen
-				name="Home"
-				component={HomeScreen}
+				name="HomeScreen"
+				component={HomeScreenNavigator}
 				options={{
 					tabBarLabel: "Home",
 					tabBarIcon: ({ color }) => (
@@ -37,8 +39,8 @@ function AppStack() {
 				}}
 			/>
 			<Tab.Screen
-				name="Search"
-				component={ExploreScreen}
+				name="ExploreScreen"
+				component={ExploreScreenNavigator}
 				options={{
 					tabBarLabel: "Search",
 					tabBarIcon: ({ color }) => (
@@ -47,8 +49,8 @@ function AppStack() {
 				}}
 			/>
 			<Tab.Screen
-				name="BookMark"
-				component={BookmarkScreen}
+				name="BookMarkScreen"
+				component={BookmarkScreenNavigator}
 				options={{
 					tabBarLabel: "Bookmarks",
 					tabBarIcon: ({ color }) => (
@@ -57,8 +59,8 @@ function AppStack() {
 				}}
 			/>
 			<Tab.Screen
-				name="Profile"
-				component={ProfileScreen}
+				name="ProfileScreen"
+				component={ProfileScreenNavigator}
 				options={{
 					tabBarLabel: "Profile",
 					tabBarIcon: ({ color }) => (

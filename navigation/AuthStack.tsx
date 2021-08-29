@@ -4,7 +4,6 @@ import { AuthParamList } from "../types/AuthParamList";
 import LoginScreen from "../screens/LoginScreen";
 import SignupScreen from "../screens/SignupScreen";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import { NavigationContainer } from "@react-navigation/native";
 
 interface AuthStackProps {}
 

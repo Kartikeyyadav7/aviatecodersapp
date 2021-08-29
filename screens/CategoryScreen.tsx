@@ -7,15 +7,17 @@ import {
 	Image,
 	ScrollView,
 } from "react-native";
+
 import { client } from "../lib/contentful";
 
-import Categories from "../components/Categories";
-
-const HomeScreen = ({ navigation }: any) => {
+const CategoryScreen = ({ route }: any) => {
 	const [blog, setBlog] = useState<any | (() => any)>([]);
 	useEffect(() => {
 		client
-			.getEntries({ content_type: "avaiteCoders" })
+			.getEntries({
+				content_type: "avaiteCoders",
+				"fields.category": route.params.category,
+			})
 			.then((res: any) => {
 				const result = res.items;
 				setBlog(result);
@@ -26,50 +28,47 @@ const HomeScreen = ({ navigation }: any) => {
 	}, []);
 
 	return (
-		<View>
-			<Categories navigation={navigation} />
-			<ScrollView>
-				<View style={styles.container}>
-					{blog.map((item: any) => (
-						<TouchableOpacity key={item.sys.id}>
-							<View style={styles.card}>
-								<View style={styles.list}>
-									<View style={styles.separator}>
-										<Text style={styles.title}>{item.fields.title}</Text>
-										<Image
-											style={styles.cardImage}
-											source={{
-												uri: `https://${item.fields.coverImage.fields.file.url}`,
-											}}
-										/>
+		<ScrollView>
+			<View style={styles.container}>
+				{blog.map((item: any) => (
+					<TouchableOpacity key={item.sys.id}>
+						<View style={styles.card}>
+							<View style={styles.list}>
+								<View style={styles.separator}>
+									<Text style={styles.title}>{item.fields.title}</Text>
+									<Image
+										style={styles.cardImage}
+										source={{
+											uri: `https://${item.fields.coverImage.fields.file.url}`,
+										}}
+									/>
 
-										<View style={styles.cardHeader}>
-											<View>
-												<Text style={styles.description}>
-													{item.fields.description}
+									<View style={styles.cardHeader}>
+										<View>
+											<Text style={styles.description}>
+												{item.fields.description}
+											</Text>
+											<View style={styles.timeContainer}>
+												<Text style={styles.time}>
+													{item.fields.publishedOn}
 												</Text>
-												<View style={styles.timeContainer}>
-													<Text style={styles.time}>
-														{item.fields.publishedOn}
-													</Text>
-													{/* <View style={styles.boomark}> */}
-												</View>
 											</View>
 										</View>
 									</View>
 								</View>
 							</View>
-						</TouchableOpacity>
-					))}
-				</View>
-			</ScrollView>
-		</View>
+						</View>
+					</TouchableOpacity>
+				))}
+			</View>
+		</ScrollView>
 	);
 };
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+
 		backgroundColor: "#fff",
 	},
 	list: {
@@ -90,8 +89,6 @@ const styles = StyleSheet.create({
 		shadowOpacity: 0.5,
 		shadowRadius: 4,
 		marginVertical: 8,
-		// backgroundColor: "",
-		// borderRadius: 12,
 	},
 	cardHeader: {
 		paddingVertical: 17,
@@ -142,4 +139,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default HomeScreen;
+export default CategoryScreen;
