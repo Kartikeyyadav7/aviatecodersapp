@@ -9,8 +9,9 @@ import {
 } from "react-native";
 
 import { client } from "../lib/contentful";
+import { formatedDate } from "../lib/date";
 
-const CategoryScreen = ({ route }: any) => {
+const CategoryScreen = ({ navigation, route }: any) => {
 	const [blog, setBlog] = useState<any | (() => any)>([]);
 	useEffect(() => {
 		client
@@ -31,7 +32,10 @@ const CategoryScreen = ({ route }: any) => {
 		<ScrollView>
 			<View style={styles.container}>
 				{blog.map((item: any) => (
-					<TouchableOpacity key={item.sys.id}>
+					<TouchableOpacity
+						key={item.sys.id}
+						onPress={() => navigation.navigate("Blog", { id: item.sys.id })}
+					>
 						<View style={styles.card}>
 							<View style={styles.list}>
 								<View style={styles.separator}>
@@ -50,7 +54,7 @@ const CategoryScreen = ({ route }: any) => {
 											</Text>
 											<View style={styles.timeContainer}>
 												<Text style={styles.time}>
-													{item.fields.publishedOn}
+													{formatedDate(item.fields.publishedOn)}
 												</Text>
 											</View>
 										</View>
@@ -111,6 +115,7 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		fontSize: 18,
+		color: "#000",
 	},
 	description: {
 		fontSize: 15,
@@ -119,7 +124,8 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-between",
 		paddingHorizontal: 0,
-		color: "#888",
+		// color: "#888",
+		color: "#000",
 		flex: 1,
 		marginTop: 5,
 		marginBottom: 5,
@@ -127,7 +133,8 @@ const styles = StyleSheet.create({
 	},
 	time: {
 		fontSize: 13,
-		color: "#808080",
+		// color: "#808080",
+		color: "#000",
 		marginTop: 5,
 	},
 

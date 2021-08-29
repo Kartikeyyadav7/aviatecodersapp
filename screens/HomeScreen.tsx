@@ -6,9 +6,11 @@ import {
 	TouchableOpacity,
 	Image,
 	ScrollView,
+	ActivityIndicator,
+	Dimensions,
 } from "react-native";
 import { client } from "../lib/contentful";
-
+import { formatedDate } from "../lib/date";
 import Categories from "../components/Categories";
 
 const HomeScreen = ({ navigation }: any) => {
@@ -24,43 +26,60 @@ const HomeScreen = ({ navigation }: any) => {
 				console.log(err);
 			});
 	}, []);
-
+	const deviceHeight = Dimensions.get("window").height;
+	const deviceWidth = Dimensions.get("window").width;
 	return (
 		<View>
 			<Categories navigation={navigation} />
 			<ScrollView>
 				<View style={styles.container}>
-					{blog.map((item: any) => (
-						<TouchableOpacity key={item.sys.id}>
-							<View style={styles.card}>
-								<View style={styles.list}>
-									<View style={styles.separator}>
-										<Text style={styles.title}>{item.fields.title}</Text>
-										<Image
-											style={styles.cardImage}
-											source={{
-												uri: `https://${item.fields.coverImage.fields.file.url}`,
-											}}
-										/>
+					{blog ? (
+						blog.map((item: any) => (
+							<TouchableOpacity
+								key={item.sys.id}
+								onPress={() => navigation.navigate("Blog", { id: item.sys.id })}
+							>
+								<View style={styles.card}>
+									<View style={styles.list}>
+										<View style={styles.separator}>
+											<Text style={styles.title}>{item.fields.title}</Text>
+											<Image
+												style={styles.cardImage}
+												source={{
+													uri: `https://${item.fields.coverImage.fields.file.url}`,
+												}}
+											/>
 
-										<View style={styles.cardHeader}>
-											<View>
-												<Text style={styles.description}>
-													{item.fields.description}
-												</Text>
-												<View style={styles.timeContainer}>
-													<Text style={styles.time}>
-														{item.fields.publishedOn}
+											<View style={styles.cardHeader}>
+												<View>
+													<Text style={styles.description}>
+														{item.fields.description}
 													</Text>
-													{/* <View style={styles.boomark}> */}
+													<View style={styles.timeContainer}>
+														<Text style={styles.time}>
+															{formatedDate(item.fields.publishedOn)}
+														</Text>
+														{/* <View style={styles.boomark}> */}
+													</View>
 												</View>
 											</View>
 										</View>
 									</View>
 								</View>
-							</View>
-						</TouchableOpacity>
-					))}
+							</TouchableOpacity>
+						))
+					) : (
+						<ActivityIndicator
+							style={{
+								height: deviceHeight,
+								width: deviceWidth,
+								alignItems: "center",
+								justifyContent: "center",
+							}}
+							size="large"
+							color="black"
+						/>
+					)}
 				</View>
 			</ScrollView>
 		</View>
@@ -114,6 +133,7 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		fontSize: 18,
+		color: "#000",
 	},
 	description: {
 		fontSize: 15,
@@ -122,7 +142,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-between",
 		paddingHorizontal: 0,
-		color: "#888",
+		color: "#000",
 		flex: 1,
 		marginTop: 5,
 		marginBottom: 5,
@@ -130,7 +150,8 @@ const styles = StyleSheet.create({
 	},
 	time: {
 		fontSize: 13,
-		color: "#808080",
+		// color: "#808080",
+		color: "#000",
 		marginTop: 5,
 	},
 

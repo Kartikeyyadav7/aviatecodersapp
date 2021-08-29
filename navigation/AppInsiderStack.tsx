@@ -5,6 +5,7 @@ import HomeScreen from "../screens/HomeScreen";
 import ExploreScreen from "../screens/ExploreScreen";
 import BookmarkScreen from "../screens/BookmarkScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import BlogScreen from "../screens/BlogScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const Stack = createNativeStackNavigator();
@@ -14,6 +15,7 @@ export const HomeScreenNavigator = () => {
 		<Stack.Navigator initialRouteName="Home">
 			<Stack.Screen name="Home" component={HomeScreen} />
 			<Stack.Screen name="Category" component={CategoryScreen} />
+			<Stack.Screen name="Blog" component={BlogScreen} />
 		</Stack.Navigator>
 	);
 };
