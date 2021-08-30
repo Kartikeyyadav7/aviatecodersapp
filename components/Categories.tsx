@@ -20,9 +20,11 @@ const Categories = ({ navigation }: any) => {
 				<TouchableOpacity
 					key={index}
 					onPress={() =>
-						navigation.navigate("Category", {
-							category,
-						})
+						navigation.navigate(
+							"Category",
+							// category,
+							{ name: "Custom profile header", category: category }
+						)
 					}
 					style={styles.category}
 				>

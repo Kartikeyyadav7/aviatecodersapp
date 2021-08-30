@@ -3,14 +3,11 @@ import {
 	StyleSheet,
 	Text,
 	View,
-	TouchableOpacity,
-	Image,
 	ScrollView,
 	ActivityIndicator,
 	Dimensions,
 } from "react-native";
-import { client } from "../lib/contentful";
-import { formatedDate } from "../lib/date";
+
 import firestore from "@react-native-firebase/firestore";
 import { context } from "../state";
 import ListBookmarks from "../components/ListBookmarks";
@@ -45,7 +42,7 @@ const BookmarkScreen = ({ navigation }: any) => {
 				<View style={styles.container}>
 					{bookmark ? (
 						<View>
-							{bookmark === null ? (
+							{bookmark === [] ? (
 								<View>
 									<Text> No Bookmarks </Text>
 								</View>

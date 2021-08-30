@@ -41,7 +41,7 @@ const BlogScreen = ({ route }: any) => {
 			.then((documentSnapshot) => {
 				if (documentSnapshot.exists) {
 					const data = documentSnapshot.data();
-					if (data?.bookmarks === null) {
+					if (data?.bookmarks === []) {
 						firestore()
 							.collection("users")
 							.doc(userId)
@@ -103,6 +103,7 @@ const BlogScreen = ({ route }: any) => {
 	};
 
 	useEffect(() => checkIfBookmarkExists(), []);
+
 	return (
 		<View>
 			{blog.fields ? (
@@ -188,7 +189,6 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",
-		// marginTop: 6,
 	},
 	attribute: {
 		flexDirection: "row",

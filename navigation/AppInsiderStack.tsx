@@ -14,8 +14,17 @@ export const HomeScreenNavigator = () => {
 	return (
 		<Stack.Navigator initialRouteName="Home">
 			<Stack.Screen name="Home" component={HomeScreen} />
-			<Stack.Screen name="Category" component={CategoryScreen} />
-			<Stack.Screen name="Blog" component={BlogScreen} />
+			<Stack.Screen
+				name="Category"
+				component={CategoryScreen}
+				//TODO: If you want to render each category header based on params passed then you have to do typescript typing into the params to access them here
+				// options={({ route }) => ({ title: route.params?.category ? route.params.category : "" })}
+			/>
+			<Stack.Screen
+				name="Blog"
+				component={BlogScreen}
+				options={{ title: "" }}
+			/>
 		</Stack.Navigator>
 	);
 };
