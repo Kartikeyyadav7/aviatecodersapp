@@ -90,7 +90,7 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 
 			const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
-			await auth()
+			return auth()
 				.signInWithCredential(googleCredential)
 				.then(() => {
 					firestore()
