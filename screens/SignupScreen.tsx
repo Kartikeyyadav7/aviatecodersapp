@@ -14,6 +14,7 @@ import auth from "@react-native-firebase/auth";
 import { AuthNavProps } from "../types/AuthParamList";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { AccessToken, LoginManager } from "react-native-fbsdk-next";
+import firestore from "@react-native-firebase/firestore";
 
 const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 	const [data, setdata] = useState({
@@ -53,13 +54,39 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 
 	const register = async (email: string, password: string) => {
 		try {
-			await auth().createUserWithEmailAndPassword(email, password);
+			await auth()
+				.createUserWithEmailAndPassword(email, password)
+				.then(() => {
+					//Once the user creation has happened successfully, we can add the currentUser into firestore
+					//with the appropriate details.
+					firestore()
+						.collection("users")
+						.doc(auth().currentUser?.uid)
+						.set({
+							name: data.name,
+							email: email,
+							createdAt: firestore.Timestamp.fromDate(new Date()),
+							userImg: null,
+							bookmarks: null,
+						})
+						//ensure we catch any errors at this stage to advise us if something does go wrong
+						.catch((error) => {
+							console.log(
+								"Something went wrong with added user to firestore: ",
+								error
+							);
+						});
+				})
+				//we need to catch the whole sign up process if it fails too.
+				.catch((error) => {
+					console.log("Something went wrong with sign up: ", error);
+				});
 		} catch (e) {
 			console.log(e);
 		}
 	};
 
-	const googleSignin = async () => {
+	const googleSignup = async () => {
 		try {
 			// Get the users ID token
 			const { idToken } = await GoogleSignin.signIn();
@@ -68,13 +95,38 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 			const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
 			// Sign-in the user with the credential
-			return auth().signInWithCredential(googleCredential);
+			await auth()
+				.signInWithCredential(googleCredential)
+				.then(() => {
+					//Once the user creation has happened successfully, we can add the currentUser into firestore
+					//with the appropriate details.
+					// console.log('current User', auth().currentUser);
+					firestore()
+						.collection("users")
+						.doc(auth().currentUser?.uid)
+						.set({
+							name: auth().currentUser?.displayName,
+							email: auth().currentUser?.email,
+							createdAt: firestore.Timestamp.fromDate(new Date()),
+							userImg: auth().currentUser?.photoURL,
+							bookmarks: null,
+						})
+						.catch((error) => {
+							console.log(
+								"Something went wrong with added user to firestore: ",
+								error
+							);
+						});
+				})
+				.catch((error) => {
+					console.log("Something went wrong with sign up: ", error);
+				});
 		} catch (error) {
 			console.log(error);
 		}
 	};
 
-	const fblogin = async () => {
+	const fbSignup = async () => {
 		try {
 			// Attempt login with permissions
 			const result = await LoginManager.logInWithPermissions([
@@ -99,7 +151,32 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 			);
 
 			// Sign-in the user with the credential
-			await auth().signInWithCredential(facebookCredential);
+			await auth()
+				.signInWithCredential(facebookCredential)
+				.then(() => {
+					//Once the user creation has happened successfully, we can add the currentUser into firestore
+					//with the appropriate details.
+					// console.log('current User', auth().currentUser);
+					firestore()
+						.collection("users")
+						.doc(auth().currentUser?.uid)
+						.set({
+							name: auth().currentUser?.displayName,
+							email: auth().currentUser?.email,
+							createdAt: firestore.Timestamp.fromDate(new Date()),
+							userImg: auth().currentUser?.photoURL,
+							bookmarks: null,
+						})
+						.catch((error) => {
+							console.log(
+								"Something went wrong with added user to firestore: ",
+								error
+							);
+						});
+				})
+				.catch((error) => {
+					console.log("Something went wrong with sign up: ", error);
+				});
 		} catch (error) {
 			console.log(error);
 		}
@@ -115,7 +192,7 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 			<Text style={styles.mainText}>Become An Aviated Coder</Text>
 			<View style={styles.buttonContainer}>
 				<TouchableOpacity
-					onPress={() => googleSignin()}
+					onPress={() => googleSignup()}
 					style={styles.googleButton}
 				>
 					<Image
@@ -123,7 +200,10 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 						style={styles.googleIcon}
 					/>
 				</TouchableOpacity>
-				<TouchableOpacity onPress={() => fblogin()} style={styles.googleButton}>
+				<TouchableOpacity
+					onPress={() => fbSignup()}
+					style={styles.googleButton}
+				>
 					<FontAwesome name="facebook" size={24} color="#4866AB" />
 				</TouchableOpacity>
 			</View>

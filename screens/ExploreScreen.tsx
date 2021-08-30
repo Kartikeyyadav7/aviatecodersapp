@@ -15,14 +15,6 @@ const logout = async () => {
 const ExploreScreen: React.FC<ExploreScreenProps> = ({}) => {
 	return (
 		<View style={styles.container}>
-			{/* <ScrollView
-	  contentInsetAdjustmentBehavior="automatic"
-	  style={{height: '100%'}}
-	>
-	  <Markdown>
-		{posts}
-	  </Markdown>
-	</ScrollView>	 */}
 			<TouchableOpacity
 				onPress={() => {
 					logout();

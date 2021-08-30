@@ -1,78 +1,87 @@
 import React, { useEffect, useState } from "react";
 import {
-	StyleSheet,
-	Text,
-	View,
 	TouchableOpacity,
+	View,
+	Text,
 	Image,
-	ScrollView,
+	StyleSheet,
+	ActivityIndicator,
+	Dimensions,
 } from "react-native";
-
 import { client } from "../lib/contentful";
 import { formatedDate } from "../lib/date";
 
-const CategoryScreen = ({ navigation, route }: any) => {
+const ListBookmarks = ({ navigation, id }: any) => {
 	const [blog, setBlog] = useState<any | (() => any)>([]);
+
 	useEffect(() => {
 		client
-			.getEntries({
-				content_type: "avaiteCoders",
-				"fields.category": route.params.category,
+			.getEntry(id)
+			.then((entry: any) => {
+				setBlog(entry);
 			})
-			.then((res: any) => {
-				const result = res.items;
-				setBlog(result);
-			})
-			.catch((err: any) => {
-				console.log(err);
-			});
+			.catch(console.error);
 	}, []);
-
+	const deviceHeight = Dimensions.get("window").height;
+	const deviceWidth = Dimensions.get("window").width;
 	return (
-		<ScrollView>
-			<View style={styles.container}>
-				{blog.map((item: any) => (
-					<TouchableOpacity
-						key={item.sys.id}
-						onPress={() => navigation.navigate("Blog", { id: item.sys.id })}
-					>
-						<View style={styles.card}>
-							<View style={styles.list}>
-								<View style={styles.separator}>
-									<Text style={styles.title}>{item.fields.title}</Text>
-									<Image
-										style={styles.cardImage}
-										source={{
-											uri: `https://${item.fields.coverImage.fields.file.url}`,
-										}}
-									/>
+		<View>
+			{blog.fields ? (
+				<TouchableOpacity
+					key={blog.sys.id}
+					onPress={() =>
+						navigation.navigate("HomeScreen", {
+							screen: "Blog",
+							params: { id: blog.sys.id },
+						})
+					}
+				>
+					<View style={styles.card}>
+						<View style={styles.list}>
+							<View style={styles.separator}>
+								<Text style={styles.title}>{blog.fields.title}</Text>
+								<Image
+									style={styles.cardImage}
+									source={{
+										uri: `https://${blog.fields.coverImage.fields.file.url}`,
+									}}
+								/>
 
-									<View style={styles.cardHeader}>
-										<View>
-											<Text style={styles.description}>
-												{item.fields.description}
+								<View style={styles.cardHeader}>
+									<View>
+										<Text style={styles.description}>
+											{blog.fields.description}
+										</Text>
+										<View style={styles.timeContainer}>
+											<Text style={styles.time}>
+												{formatedDate(blog.fields.publishedOn)}
 											</Text>
-											<View style={styles.timeContainer}>
-												<Text style={styles.time}>
-													{formatedDate(item.fields.publishedOn)}
-												</Text>
-											</View>
 										</View>
 									</View>
 								</View>
 							</View>
 						</View>
-					</TouchableOpacity>
-				))}
-			</View>
-		</ScrollView>
+					</View>
+				</TouchableOpacity>
+			) : (
+				<ActivityIndicator
+					style={{
+						height: deviceHeight,
+						width: deviceWidth,
+						alignItems: "center",
+						justifyContent: "center",
+					}}
+					size="large"
+					color="black"
+				/>
+			)}
+		</View>
 	);
 };
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-
 		backgroundColor: "#fff",
 	},
 	list: {
@@ -93,6 +102,8 @@ const styles = StyleSheet.create({
 		shadowOpacity: 0.5,
 		shadowRadius: 4,
 		marginVertical: 8,
+		// backgroundColor: "",
+		// borderRadius: 12,
 	},
 	cardHeader: {
 		paddingVertical: 17,
@@ -125,7 +136,6 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		paddingHorizontal: 0,
 		color: "#808080",
-		// color: "#000",
 		flex: 1,
 		marginTop: 5,
 		marginBottom: 5,
@@ -146,4 +156,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default CategoryScreen;
+export default ListBookmarks;

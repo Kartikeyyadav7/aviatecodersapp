@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
 	View,
 	Text,
@@ -7,15 +7,20 @@ import {
 	ActivityIndicator,
 	Dimensions,
 	StyleSheet,
+	TouchableOpacity,
 } from "react-native";
 import { client } from "../lib/contentful";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Markdown from "react-native-markdown-display";
+import firestore from "@react-native-firebase/firestore";
+import { context } from "../state";
 
 const BlogScreen = ({ route }: any) => {
 	const [blog, setBlog] = useState<any | (() => any)>([]);
+	const [isBookmark, setIsBookmark] = useState(false);
 	const { id } = route.params;
-
+	const { state } = useContext(context);
+	const userId = state.user?.uid;
 	useEffect(() => {
 		client
 			.getEntry(id)
@@ -27,20 +32,99 @@ const BlogScreen = ({ route }: any) => {
 
 	const deviceHeight = Dimensions.get("window").height;
 	const deviceWidth = Dimensions.get("window").width;
-	let formatedTheformatedDate: any;
-	if (blog.fields) {
-		const date = new Date(blog.fields.publishedOn);
-		const formatedDate = date.toDateString();
-		formatedTheformatedDate = formatedDate.slice(4, 19);
-	}
+
+	const bookmarkBlog = () => {
+		firestore()
+			.collection("users")
+			.doc(userId)
+			.get()
+			.then((documentSnapshot) => {
+				if (documentSnapshot.exists) {
+					const data = documentSnapshot.data();
+					if (data?.bookmarks === null) {
+						firestore()
+							.collection("users")
+							.doc(userId)
+							.update({ bookmarks: firestore.FieldValue.arrayUnion(id) })
+							.then(() => {
+								console.log("User bookmark updated!");
+								setIsBookmark(true);
+							})
+							.catch((error) => console.log(error));
+					} else {
+						const bookmarkExists = data?.bookmarks.includes(id);
+
+						if (bookmarkExists) {
+							firestore()
+								.collection("users")
+								.doc(userId)
+								.update({ bookmarks: firestore.FieldValue.arrayRemove(id) })
+								.then(() => {
+									setIsBookmark(false);
+								})
+								.catch((error) => console.log(error));
+						} else {
+							firestore()
+								.collection("users")
+								.doc(userId)
+								.update({ bookmarks: firestore.FieldValue.arrayUnion(id) })
+								.then(() => {
+									setIsBookmark(true);
+								})
+								.catch((error) => console.log(error));
+						}
+					}
+				}
+			})
+			.catch((error) => console.log(error));
+	};
+
+	const checkIfBookmarkExists = () => {
+		firestore()
+			.collection("users")
+			.doc(userId)
+			.get()
+			.then((documentSnapshot) => {
+				if (documentSnapshot.exists) {
+					const data = documentSnapshot.data();
+					if (data?.bookmarks === []) {
+						setIsBookmark(false);
+					} else {
+						const bookmarkExists = data?.bookmarks.includes(id);
+						if (bookmarkExists) {
+							setIsBookmark(true);
+						} else {
+							setIsBookmark(false);
+						}
+					}
+				}
+			})
+			.catch((error) => console.log(error));
+	};
+
+	useEffect(() => checkIfBookmarkExists(), []);
 	return (
 		<View>
 			{blog.fields ? (
-				<ScrollView>
+				<ScrollView showsVerticalScrollIndicator={false}>
 					<View style={styles.container}>
 						<View style={styles.attributeContainer}>
 							<Text style={styles.title}>{blog.fields.title}</Text>
-							<MaterialIcons name="bookmark-border" color="black" size={26} />
+							<TouchableOpacity
+								onPress={() => {
+									bookmarkBlog();
+								}}
+							>
+								{isBookmark ? (
+									<MaterialIcons name="bookmark" color="black" size={26} />
+								) : (
+									<MaterialIcons
+										name="bookmark-border"
+										color="black"
+										size={26}
+									/>
+								)}
+							</TouchableOpacity>
 						</View>
 						<View>
 							<View style={styles.attribute}>

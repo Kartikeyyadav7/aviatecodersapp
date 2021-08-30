@@ -59,7 +59,6 @@ const HomeScreen = ({ navigation }: any) => {
 														<Text style={styles.time}>
 															{formatedDate(item.fields.publishedOn)}
 														</Text>
-														{/* <View style={styles.boomark}> */}
 													</View>
 												</View>
 											</View>
@@ -142,7 +141,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-between",
 		paddingHorizontal: 0,
-		color: "#000",
+		color: "#808080",
 		flex: 1,
 		marginTop: 5,
 		marginBottom: 5,
@@ -150,8 +149,8 @@ const styles = StyleSheet.create({
 	},
 	time: {
 		fontSize: 13,
-		// color: "#808080",
-		color: "#000",
+		color: "#808080",
+		// color: "#000",
 		marginTop: 5,
 	},
 
