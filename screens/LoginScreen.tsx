@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { TextInput, TextStyle, TouchableOpacity } from "react-native";
 import { ImageStyle } from "react-native";
 import {
@@ -17,6 +17,9 @@ import auth from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { AccessToken, LoginManager } from "react-native-fbsdk-next";
 import StatusBarHead from "../components/StatusBarHead";
+import { Root, Popup } from "react-native-popup-confirm-toast";
+
+import firestore from "@react-native-firebase/firestore";
 
 const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
 	const [data, setdata] = useState({
@@ -50,6 +53,13 @@ const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
 			await auth().signInWithEmailAndPassword(email, password);
 		} catch (e) {
 			console.log(e);
+			Popup.show({
+				type: "warning",
+				title: "Email or password is wrong or you haven't signed in",
+				callback: () => Popup.hide(),
+				timing: 0,
+				okButtonStyle: { backgroundColor: "#1E2E46" },
+			});
 		}
 	};
 
@@ -57,12 +67,33 @@ const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
 		try {
 			// Get the users ID token
 			const { idToken } = await GoogleSignin.signIn();
+			const userGoogleDetails = await GoogleSignin.getCurrentUser();
 
-			// Create a Google credential with the token
 			const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
-			// Sign-in the user with the credential
-			return auth().signInWithCredential(googleCredential);
+			await firestore()
+				.collection("users")
+				.get()
+				.then((querySnapshot) => {
+					let existingUserEmail: any = [];
+					querySnapshot.forEach((documentSnapshot) => {
+						existingUserEmail.push(documentSnapshot.data().email);
+					});
+
+					if (existingUserEmail.includes(userGoogleDetails?.user.email)) {
+						return auth().signInWithCredential(googleCredential);
+					} else {
+						Popup.show({
+							type: "warning",
+							title: "Account does not exists, please sign up first",
+							callback: () => Popup.hide(),
+							timing: 0,
+							okButtonStyle: { backgroundColor: "#1E2E46" },
+						});
+					}
+				});
+
+			// await auth().fetchSignInMethodsForEmail()
 		} catch (error) {
 			console.log(error);
 		}
@@ -100,61 +131,67 @@ const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
 	};
 
 	return (
-		<ScrollView
-			showsVerticalScrollIndicator={false}
-			contentContainerStyle={styles.container}
-		>
-			<StatusBarHead />
-			<View style={styles.header}>
-				<Image source={require("../assets/logo.png")} style={styles.logo} />
-				<Text style={styles.logoText}>Aviate Coders </Text>
-			</View>
-			<Text style={styles.mainText}>Welcome back</Text>
-			<View style={styles.buttonContainer}>
-				<TouchableOpacity
-					onPress={() => googleSignin()}
-					style={styles.googleButton}
-				>
-					<Image
-						source={require("../assets/google.png")}
-						style={styles.googleIcon}
-					/>
-				</TouchableOpacity>
-				<TouchableOpacity onPress={() => fblogin()} style={styles.googleButton}>
-					<FontAwesome name="facebook" size={24} color="#4866AB" />
-				</TouchableOpacity>
-			</View>
-			<TextInput
-				style={styles.input}
-				placeholder="Email"
-				onChangeText={(val) => emailInputChange(val)}
-			/>
-			<TextInput
-				style={styles.input}
-				placeholder="Password"
-				// secureTextEntry={true}
-				autoCapitalize="none"
-				onChangeText={(val) => handlePasswordChange(val)}
-			/>
-
-			<TouchableOpacity
-				onPress={() => login(data.email, data.password)}
-				style={styles.signupButton}
+		<Root>
+			<ScrollView
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={styles.container}
 			>
-				<Text style={[styles.btnText]}>Login</Text>
-			</TouchableOpacity>
-			<View style={styles.divider} />
-			<View style={styles.row}>
-				<Text style={styles.redirectText}>Don't have an account?</Text>
+				<StatusBarHead />
+				<View style={styles.header}>
+					<Image source={require("../assets/logo.png")} style={styles.logo} />
+					<Text style={styles.logoText}>Aviate Coders </Text>
+				</View>
+				<Text style={styles.mainText}>Welcome back</Text>
+				<View style={styles.buttonContainer}>
+					<TouchableOpacity
+						onPress={() => googleSignin()}
+						style={styles.googleButton}
+					>
+						<Image
+							source={require("../assets/google.png")}
+							style={styles.googleIcon}
+						/>
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => fblogin()}
+						style={styles.googleButton}
+					>
+						<FontAwesome name="facebook" size={24} color="#4866AB" />
+					</TouchableOpacity>
+				</View>
+				<TextInput
+					style={styles.input}
+					placeholder="Email"
+					onChangeText={(val) => emailInputChange(val)}
+				/>
+				<TextInput
+					style={styles.input}
+					placeholder="Password"
+					// secureTextEntry={true}
+
+					autoCapitalize="none"
+					onChangeText={(val) => handlePasswordChange(val)}
+				/>
+
 				<TouchableOpacity
-					onPress={() => {
-						navigation.navigate("SignupScreen");
-					}}
+					onPress={() => login(data.email, data.password)}
+					style={styles.signupButton}
 				>
-					<Text style={[styles.redirectTextLink]}>Signup</Text>
+					<Text style={[styles.btnText]}>Login</Text>
 				</TouchableOpacity>
-			</View>
-		</ScrollView>
+				<View style={styles.divider} />
+				<View style={styles.row}>
+					<Text style={styles.redirectText}>Don't have an account?</Text>
+					<TouchableOpacity
+						onPress={() => {
+							navigation.navigate("SignupScreen");
+						}}
+					>
+						<Text style={[styles.redirectTextLink]}>Signup</Text>
+					</TouchableOpacity>
+				</View>
+			</ScrollView>
+		</Root>
 	);
 };
 

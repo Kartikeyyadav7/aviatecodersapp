@@ -30,7 +30,7 @@ const CategoryScreen = ({ navigation, route }: any) => {
 	}, []);
 
 	return (
-		<ScrollView>
+		<ScrollView showsVerticalScrollIndicator={false}>
 			<StatusBarHead />
 			<View style={styles.container}>
 				{blog.map((item: any) => (

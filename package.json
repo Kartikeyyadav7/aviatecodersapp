@@ -30,8 +30,10 @@
 		"react-native-fbsdk-next": "^4.3.0",
 		"react-native-markdown-display": "^7.0.0-alpha.2",
 		"react-native-paper": "^4.9.2",
+		"react-native-popup-confirm-toast": "^2.0.2",
 		"react-native-safe-area-context": "^3.3.0",
 		"react-native-screens": "^3.5.0",
+		"react-native-status-bar-height": "^2.6.0",
 		"react-native-vector-icons": "^8.1.0",
 		"react-native-windows": "^0.64.0-0",
 		"reading-time": "^1.4.0"

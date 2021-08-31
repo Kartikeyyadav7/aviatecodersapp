@@ -37,40 +37,36 @@ const BookmarkScreen = ({ navigation }: any) => {
 	const deviceHeight = Dimensions.get("window").height;
 	const deviceWidth = Dimensions.get("window").width;
 	return (
-		<View>
-			<ScrollView>
-				<View style={styles.container}>
-					{bookmark ? (
-						<View>
-							{bookmark === [] ? (
-								<View>
-									<Text> No Bookmarks </Text>
-								</View>
-							) : (
-								bookmark
-									.reverse()
-									.map((item: any) => (
-										<ListBookmarks
-											id={item}
-											key={item}
-											navigation={navigation}
-										/>
-									))
-							)}
-						</View>
-					) : (
-						<ActivityIndicator
-							style={{
-								height: deviceHeight,
-								width: deviceWidth,
-								alignItems: "center",
-								justifyContent: "center",
-							}}
-							size="large"
-							color="black"
-						/>
-					)}
-				</View>
+		<View style={styles.container}>
+			<ScrollView showsVerticalScrollIndicator={false}>
+				{/* <View style={styles.container}> */}
+				{bookmark ? (
+					<View>
+						{bookmark === [] ? (
+							<View>
+								<Text> No Bookmarks </Text>
+							</View>
+						) : (
+							bookmark
+								.reverse()
+								.map((item: any) => (
+									<ListBookmarks id={item} key={item} navigation={navigation} />
+								))
+						)}
+					</View>
+				) : (
+					<ActivityIndicator
+						style={{
+							height: deviceHeight,
+							width: deviceWidth,
+							alignItems: "center",
+							justifyContent: "center",
+						}}
+						size="large"
+						color="black"
+					/>
+				)}
+				{/* </View> */}
 			</ScrollView>
 		</View>
 	);

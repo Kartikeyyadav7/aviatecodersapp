@@ -18,8 +18,8 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { AccessToken, LoginManager } from "react-native-fbsdk-next";
 import firestore from "@react-native-firebase/firestore";
 import StatusBarHead from "../components/StatusBarHead";
+import { Root, Popup } from "react-native-popup-confirm-toast";
 
-//TODO : If the user directly goes to the login section and does login with google then we have to redirect to the user to go the signup page first to make an account and then login or else it may cause problems
 //TODO: Check if the user already exists then throw error
 
 const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
@@ -74,14 +74,27 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 							bookmarks: [],
 						})
 						.catch((error) => {
-							console.log(
-								"Something went wrong with added user to firestore: ",
-								error
-							);
+							// console.log(
+							// 	"Something went wrong with added user to firestore: ",
+							// 	error
+							// );
+							Popup.show({
+								type: "warning",
+								title: "Error creating account",
+								callback: () => Popup.hide(),
+								timing: 0,
+								okButtonStyle: { backgroundColor: "#1E2E46" },
+							});
 						});
 				})
 				.catch((error) => {
-					console.log("Something went wrong with sign up: ", error);
+					Popup.show({
+						type: "warning",
+						title: "Error creating account",
+						callback: () => Popup.hide(),
+						timing: 0,
+						okButtonStyle: { backgroundColor: "#1E2E46" },
+					});
 				});
 		} catch (e) {
 			console.log(e);
@@ -92,30 +105,53 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 		try {
 			const { idToken } = await GoogleSignin.signIn();
 
+			const userGoogleDetails = await GoogleSignin.getCurrentUser();
+
 			const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
-			return auth()
-				.signInWithCredential(googleCredential)
-				.then(() => {
-					firestore()
-						.collection("users")
-						.doc(auth().currentUser?.uid)
-						.set({
-							name: auth().currentUser?.displayName,
-							email: auth().currentUser?.email,
-							createdAt: firestore.Timestamp.fromDate(new Date()),
-							userImg: auth().currentUser?.photoURL,
-							bookmarks: [],
-						})
-						.catch((error) => {
-							console.log(
-								"Something went wrong with added user to firestore: ",
-								error
-							);
+			await firestore()
+				.collection("users")
+				.get()
+				.then((querySnapshot) => {
+					let existingUserEmail: any = [];
+					querySnapshot.forEach((documentSnapshot) => {
+						existingUserEmail.push(documentSnapshot.data().email);
+					});
+
+					if (existingUserEmail.includes(userGoogleDetails?.user.email)) {
+						Popup.show({
+							type: "warning",
+							title: "Account already exists , please login",
+							callback: () => Popup.hide(),
+							timing: 0,
+							okButtonStyle: { backgroundColor: "#1E2E46" },
 						});
-				})
-				.catch((error) => {
-					console.log("Something went wrong with sign up: ", error);
+						// console.log("Please login");
+					} else {
+						return auth()
+							.signInWithCredential(googleCredential)
+							.then(() => {
+								firestore()
+									.collection("users")
+									.doc(auth().currentUser?.uid)
+									.set({
+										name: auth().currentUser?.displayName,
+										email: auth().currentUser?.email,
+										createdAt: firestore.Timestamp.fromDate(new Date()),
+										userImg: auth().currentUser?.photoURL,
+										bookmarks: [],
+									})
+									.catch((error) => {
+										console.log(
+											"Something went wrong with added user to firestore: ",
+											error
+										);
+									});
+							})
+							.catch((error) => {
+								console.log("Something went wrong with sign up: ", error);
+							});
+					}
 				});
 		} catch (error) {
 			console.log(error);
@@ -172,71 +208,73 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 	};
 
 	return (
-		<ScrollView
-			showsVerticalScrollIndicator={false}
-			contentContainerStyle={styles.container}
-		>
-			<StatusBarHead />
-			{/* <View style={styles.container}> */}
-			<View style={styles.header}>
-				<Image source={require("../assets/logo.png")} style={styles.logo} />
-				<Text style={styles.logoText}>Aviate Coders </Text>
-			</View>
-
-			<Text style={styles.mainText}>Become An Aviated Coder</Text>
-			<View style={styles.buttonContainer}>
-				<TouchableOpacity
-					onPress={() => googleSignup()}
-					style={styles.googleButton}
-				>
-					<Image
-						source={require("../assets/google.png")}
-						style={styles.googleIcon}
-					/>
-				</TouchableOpacity>
-				<TouchableOpacity
-					onPress={() => fbSignup()}
-					style={styles.googleButton}
-				>
-					<FontAwesome name="facebook" size={24} color="#4866AB" />
-				</TouchableOpacity>
-			</View>
-			<TextInput
-				style={styles.input}
-				placeholder="Name"
-				onChangeText={(val) => nameInputChange(val)}
-			/>
-			<TextInput
-				style={styles.input}
-				placeholder="Password"
-				// secureTextEntry={true}
-				autoCapitalize="none"
-				onChangeText={(val) => handlePasswordChange(val)}
-			/>
-			<TextInput
-				style={styles.input}
-				placeholder="Email"
-				onChangeText={(val) => emailInputChange(val)}
-			/>
-			<TouchableOpacity
-				style={styles.signupButton}
-				onPress={() => register(data.email, data.password)}
+		<Root>
+			<ScrollView
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={styles.container}
 			>
-				<Text style={styles.btnText}>Sign up</Text>
-			</TouchableOpacity>
-			<View style={styles.divider} />
-			<View style={styles.row}>
-				<Text style={styles.redirectText}>Already have an account?</Text>
+				<StatusBarHead />
+				{/* <View style={styles.container}> */}
+				<View style={styles.header}>
+					<Image source={require("../assets/logo.png")} style={styles.logo} />
+					<Text style={styles.logoText}>Aviate Coders </Text>
+				</View>
+
+				<Text style={styles.mainText}>Become An Aviated Coder</Text>
+				<View style={styles.buttonContainer}>
+					<TouchableOpacity
+						onPress={() => googleSignup()}
+						style={styles.googleButton}
+					>
+						<Image
+							source={require("../assets/google.png")}
+							style={styles.googleIcon}
+						/>
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => fbSignup()}
+						style={styles.googleButton}
+					>
+						<FontAwesome name="facebook" size={24} color="#4866AB" />
+					</TouchableOpacity>
+				</View>
+				<TextInput
+					style={styles.input}
+					placeholder="Name"
+					onChangeText={(val) => nameInputChange(val)}
+				/>
+				<TextInput
+					style={styles.input}
+					placeholder="Password"
+					// secureTextEntry={true}
+					autoCapitalize="none"
+					onChangeText={(val) => handlePasswordChange(val)}
+				/>
+				<TextInput
+					style={styles.input}
+					placeholder="Email"
+					onChangeText={(val) => emailInputChange(val)}
+				/>
 				<TouchableOpacity
-					onPress={() => {
-						navigation.navigate("LoginScreen");
-					}}
+					style={styles.signupButton}
+					onPress={() => register(data.email, data.password)}
 				>
-					<Text style={styles.redirectTextLink}>Login</Text>
+					<Text style={styles.btnText}>Sign up</Text>
 				</TouchableOpacity>
-			</View>
-			{/* </View> */}
-		</ScrollView>
+				<View style={styles.divider} />
+				<View style={styles.row}>
+					<Text style={styles.redirectText}>Already have an account?</Text>
+					<TouchableOpacity
+						onPress={() => {
+							navigation.navigate("LoginScreen");
+						}}
+					>
+						<Text style={styles.redirectTextLink}>Login</Text>
+					</TouchableOpacity>
+				</View>
+				{/* </View> */}
+			</ScrollView>
+		</Root>
 	);
 };
 

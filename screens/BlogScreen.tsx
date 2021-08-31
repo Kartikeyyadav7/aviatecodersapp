@@ -15,6 +15,7 @@ import Markdown from "react-native-markdown-display";
 import firestore from "@react-native-firebase/firestore";
 import { context } from "../state";
 import StatusBarHead from "../components/StatusBarHead";
+import { Root, Popup } from "react-native-popup-confirm-toast";
 
 const BlogScreen = ({ route }: any) => {
 	const [blog, setBlog] = useState<any | (() => any)>([]);
@@ -50,6 +51,24 @@ const BlogScreen = ({ route }: any) => {
 							.then(() => {
 								console.log("User bookmark updated!");
 								setIsBookmark(true);
+								const popup = Popup;
+								popup.show({
+									type: "confirm",
+									title: "Bookmark Added",
+									iconEnabled: false,
+									timing: 2000,
+									buttonEnabled: false,
+									confirmText: false,
+									modalContainerStyle: {
+										width: "70%",
+										backgroundColor: "#fff",
+										borderRadius: 8,
+										alignItems: "center",
+										overflow: "hidden",
+										position: "absolute",
+										height: 67,
+									},
+								});
 							})
 							.catch((error) => console.log(error));
 					} else {
@@ -62,6 +81,24 @@ const BlogScreen = ({ route }: any) => {
 								.update({ bookmarks: firestore.FieldValue.arrayRemove(id) })
 								.then(() => {
 									setIsBookmark(false);
+									const popup = Popup;
+									popup.show({
+										type: "confirm",
+										title: "Bookmark Removed",
+										iconEnabled: false,
+										timing: 2000,
+										buttonEnabled: false,
+										confirmText: false,
+										modalContainerStyle: {
+											width: "70%",
+											backgroundColor: "#fff",
+											borderRadius: 8,
+											alignItems: "center",
+											overflow: "hidden",
+											position: "absolute",
+											height: 67,
+										},
+									});
 								})
 								.catch((error) => console.log(error));
 						} else {
@@ -71,6 +108,24 @@ const BlogScreen = ({ route }: any) => {
 								.update({ bookmarks: firestore.FieldValue.arrayUnion(id) })
 								.then(() => {
 									setIsBookmark(true);
+									const popup = Popup;
+									popup.show({
+										type: "confirm",
+										title: "Bookmark Added",
+										iconEnabled: false,
+										timing: 2000,
+										buttonEnabled: false,
+										confirmText: false,
+										modalContainerStyle: {
+											width: "70%",
+											backgroundColor: "#fff",
+											borderRadius: 8,
+											alignItems: "center",
+											overflow: "hidden",
+											position: "absolute",
+											height: 67,
+										},
+									});
 								})
 								.catch((error) => console.log(error));
 						}
@@ -106,72 +161,74 @@ const BlogScreen = ({ route }: any) => {
 	useEffect(() => checkIfBookmarkExists(), []);
 
 	return (
-		<View>
-			<StatusBarHead />
-			{blog.fields ? (
-				<ScrollView showsVerticalScrollIndicator={false}>
-					<View style={styles.container}>
-						<View style={styles.attributeContainer}>
-							<Text style={styles.title}>{blog.fields.title}</Text>
-							<TouchableOpacity
-								onPress={() => {
-									bookmarkBlog();
+		<Root>
+			<View>
+				<StatusBarHead />
+				{blog.fields ? (
+					<ScrollView showsVerticalScrollIndicator={false}>
+						<View style={styles.container}>
+							<View style={styles.attributeContainer}>
+								<Text style={styles.title}>{blog.fields.title}</Text>
+								<TouchableOpacity
+									onPress={() => {
+										bookmarkBlog();
+									}}
+								>
+									{isBookmark ? (
+										<MaterialIcons name="bookmark" color="black" size={26} />
+									) : (
+										<MaterialIcons
+											name="bookmark-border"
+											color="black"
+											size={26}
+										/>
+									)}
+								</TouchableOpacity>
+							</View>
+							<View>
+								<View style={styles.attribute}>
+									<Text style={styles.author}>By {blog.fields.author}</Text>
+									{/* <Text style={styles.date}>{formatedTheformatedDate}</Text> */}
+								</View>
+							</View>
+							<Image
+								style={styles.cardImage}
+								source={{
+									uri: `https://${blog.fields.coverImage.fields.file.url}`,
 								}}
-							>
-								{isBookmark ? (
-									<MaterialIcons name="bookmark" color="black" size={26} />
-								) : (
-									<MaterialIcons
-										name="bookmark-border"
-										color="black"
-										size={26}
-									/>
-								)}
-							</TouchableOpacity>
-						</View>
-						<View>
-							<View style={styles.attribute}>
-								<Text style={styles.author}>By {blog.fields.author}</Text>
-								{/* <Text style={styles.date}>{formatedTheformatedDate}</Text> */}
+							/>
+							<View style={styles.separator}></View>
+							<View style={styles.blog}>
+								<Markdown
+									style={{
+										body: { color: "#000", fontSize: 15 },
+										// heading1: {color: 'purple'},
+										code_block: {
+											backgroundColor: "#000",
+											color: "#fff",
+											fontSize: 14,
+										},
+									}}
+								>
+									{blog.fields.blogContent}
+								</Markdown>
 							</View>
 						</View>
-						<Image
-							style={styles.cardImage}
-							source={{
-								uri: `https://${blog.fields.coverImage.fields.file.url}`,
-							}}
-						/>
-						<View style={styles.separator}></View>
-						<View style={styles.blog}>
-							<Markdown
-								style={{
-									body: { color: "#000", fontSize: 15 },
-									// heading1: {color: 'purple'},
-									code_block: {
-										backgroundColor: "#000",
-										color: "#fff",
-										fontSize: 14,
-									},
-								}}
-							>
-								{blog.fields.blogContent}
-							</Markdown>
-						</View>
-					</View>
-				</ScrollView>
-			) : (
-				<ActivityIndicator
-					style={{
-						height: deviceHeight,
-						width: deviceWidth,
-						alignItems: "center",
-						justifyContent: "center",
-					}}
-					size="large"
-					color="black"
-				/>
-			)}
-		</View>
+					</ScrollView>
+				) : (
+					<ActivityIndicator
+						style={{
+							height: deviceHeight,
+							width: deviceWidth,
+							alignItems: "center",
+							justifyContent: "center",
+						}}
+						size="large"
+						color="black"
+					/>
+				)}
+			</View>
+		</Root>
 	);
 };
 

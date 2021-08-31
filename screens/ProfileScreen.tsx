@@ -22,10 +22,6 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({}) => {
 
 	const userId = state.user?.uid;
 
-	useEffect(() => {
-		profileDetails();
-	}, []);
-
 	const profileDetails = () => {
 		firestore()
 			.collection("users")
@@ -50,6 +46,9 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({}) => {
 		}
 	};
 
+	useEffect(() => {
+		profileDetails();
+	}, []);
 	return (
 		<View style={styles.container}>
 			<StatusBarHead />
