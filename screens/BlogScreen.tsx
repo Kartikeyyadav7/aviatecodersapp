@@ -14,6 +14,7 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Markdown from "react-native-markdown-display";
 import firestore from "@react-native-firebase/firestore";
 import { context } from "../state";
+import StatusBarHead from "../components/StatusBarHead";
 
 const BlogScreen = ({ route }: any) => {
 	const [blog, setBlog] = useState<any | (() => any)>([]);
@@ -106,6 +107,7 @@ const BlogScreen = ({ route }: any) => {
 
 	return (
 		<View>
+			<StatusBarHead />
 			{blog.fields ? (
 				<ScrollView showsVerticalScrollIndicator={false}>
 					<View style={styles.container}>

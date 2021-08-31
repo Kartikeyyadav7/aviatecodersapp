@@ -38,10 +38,13 @@ const Categories = ({ navigation }: any) => {
 const styles = StyleSheet.create({
 	container: {
 		backgroundColor: "#fff",
+		// paddingBottom: 40,
 	},
 	textStyle: {
 		color: "#000",
 		fontSize: 19,
+		// paddingTop: 20,
+		height: 28,
 	},
 	category: {
 		borderRadius: 12,

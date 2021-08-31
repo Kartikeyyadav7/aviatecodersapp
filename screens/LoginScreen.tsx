@@ -8,12 +8,15 @@ import {
 	ViewStyle,
 	Image,
 	Dimensions,
+	SafeAreaView,
+	ScrollView,
 } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { AuthNavProps } from "../types/AuthParamList";
 import auth from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { AccessToken, LoginManager } from "react-native-fbsdk-next";
+import StatusBarHead from "../components/StatusBarHead";
 
 const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
 	const [data, setdata] = useState({
@@ -97,7 +100,11 @@ const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
 	};
 
 	return (
-		<View style={styles.container}>
+		<ScrollView
+			showsVerticalScrollIndicator={false}
+			contentContainerStyle={styles.container}
+		>
+			<StatusBarHead />
 			<View style={styles.header}>
 				<Image source={require("../assets/logo.png")} style={styles.logo} />
 				<Text style={styles.logoText}>Aviate Coders </Text>
@@ -147,7 +154,7 @@ const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
 					<Text style={[styles.redirectTextLink]}>Signup</Text>
 				</TouchableOpacity>
 			</View>
-		</View>
+		</ScrollView>
 	);
 };
 
@@ -266,18 +273,22 @@ const styles = StyleSheet.create<Styles>({
 		fontSize: 18,
 		fontFamily: "Adamina-Regular",
 		color: "black",
+		textAlign: "center",
+		paddingRight: 5,
 	},
 	redirectTextLink: {
 		fontSize: 18,
 		fontFamily: "Adamina-Regular",
 		color: "purple",
+		paddingLeft: 1,
+
 		// fontWeight: "bold",
 	},
 	row: {
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
-		width: "70%",
+		// width: "70%",
 	},
 });
 

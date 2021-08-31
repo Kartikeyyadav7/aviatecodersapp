@@ -47,9 +47,15 @@ const BookmarkScreen = ({ navigation }: any) => {
 									<Text> No Bookmarks </Text>
 								</View>
 							) : (
-								bookmark.map((item: any) => (
-									<ListBookmarks id={item} key={item} navigation={navigation} />
-								))
+								bookmark
+									.reverse()
+									.map((item: any) => (
+										<ListBookmarks
+											id={item}
+											key={item}
+											navigation={navigation}
+										/>
+									))
 							)}
 						</View>
 					) : (

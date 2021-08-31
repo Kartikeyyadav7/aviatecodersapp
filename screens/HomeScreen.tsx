@@ -8,10 +8,12 @@ import {
 	ScrollView,
 	ActivityIndicator,
 	Dimensions,
+	StatusBar,
 } from "react-native";
 import { client } from "../lib/contentful";
 import { formatedDate } from "../lib/date";
 import Categories from "../components/Categories";
+import StatusBarHead from "../components/StatusBarHead";
 
 const HomeScreen = ({ navigation }: any) => {
 	const [blog, setBlog] = useState<any | (() => any)>([]);
@@ -30,42 +32,51 @@ const HomeScreen = ({ navigation }: any) => {
 	const deviceWidth = Dimensions.get("window").width;
 	return (
 		<View>
+			<StatusBarHead />
 			<Categories navigation={navigation} />
-			<ScrollView>
+			<ScrollView
+				contentContainerStyle={styles.scrollContainer}
+				showsVerticalScrollIndicator={false}
+			>
 				<View style={styles.container}>
 					{blog ? (
 						blog.map((item: any) => (
-							<TouchableOpacity
-								key={item.sys.id}
-								onPress={() => navigation.navigate("Blog", { id: item.sys.id })}
-							>
-								<View style={styles.card}>
-									<View style={styles.list}>
-										<View style={styles.separator}>
-											<Text style={styles.title}>{item.fields.title}</Text>
-											<Image
-												style={styles.cardImage}
-												source={{
-													uri: `https://${item.fields.coverImage.fields.file.url}`,
-												}}
-											/>
+							<View key={item.sys.id}>
+								<TouchableOpacity
+									key={item.sys.id}
+									onPress={() =>
+										navigation.navigate("Blog", { id: item.sys.id })
+									}
+								>
+									<View style={styles.card}>
+										<View style={styles.list}>
+											<View style={styles.separator}>
+												<Text style={styles.title}>{item.fields.title}</Text>
+												<Image
+													style={styles.cardImage}
+													source={{
+														uri: `https://${item.fields.coverImage.fields.file.url}`,
+													}}
+												/>
 
-											<View style={styles.cardHeader}>
-												<View>
-													<Text style={styles.description}>
-														{item.fields.description}
-													</Text>
-													<View style={styles.timeContainer}>
-														<Text style={styles.time}>
-															{formatedDate(item.fields.publishedOn)}
+												<View style={styles.cardHeader}>
+													<View>
+														<Text style={styles.description}>
+															{item.fields.description}
 														</Text>
+														<View style={styles.timeContainer}>
+															<Text style={styles.time}>
+																{formatedDate(item.fields.publishedOn)}
+															</Text>
+														</View>
 													</View>
 												</View>
 											</View>
 										</View>
 									</View>
-								</View>
-							</TouchableOpacity>
+								</TouchableOpacity>
+								{/* <View style={styles.separator}></View> */}
+							</View>
 						))
 					) : (
 						<ActivityIndicator
@@ -86,10 +97,14 @@ const HomeScreen = ({ navigation }: any) => {
 };
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#fff",
+	scrollContainer: {
+		marginVertical: 1,
 	},
+	container: {
+		backgroundColor: "#fff",
+		paddingBottom: 45,
+	},
+
 	list: {
 		paddingHorizontal: 17,
 		backgroundColor: "#ffffff",
@@ -108,8 +123,6 @@ const styles = StyleSheet.create({
 		shadowOpacity: 0.5,
 		shadowRadius: 4,
 		marginVertical: 8,
-		// backgroundColor: "",
-		// borderRadius: 12,
 	},
 	cardHeader: {
 		paddingVertical: 17,

@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from "react";
 import RNBootSplash from "react-native-bootsplash";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, View } from "react-native";
 import Routes from "./navigation/Routes";
 import { defaultState, Provider, reducer } from "./state";
 
@@ -14,11 +14,9 @@ export default function App() {
 	}, []);
 
 	return (
-		// <SafeAreaView>
 		<Provider value={{ state, dispatch }}>
 			<Routes />
 		</Provider>
-		// </SafeAreaView>
 	);
 }
 

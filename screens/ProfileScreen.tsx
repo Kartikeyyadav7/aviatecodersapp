@@ -11,6 +11,7 @@ import {
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { context } from "../state";
+import StatusBarHead from "../components/StatusBarHead";
 
 interface ProfileScreenProps {}
 
@@ -51,6 +52,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({}) => {
 
 	return (
 		<View style={styles.container}>
+			<StatusBarHead />
 			{profile ? (
 				<View>
 					<Image
@@ -87,6 +89,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: "center",
 		justifyContent: "center",
+		backgroundColor: "#fff",
 	},
 	redirectTextLink: {
 		fontFamily: `Adamina-Regular`,

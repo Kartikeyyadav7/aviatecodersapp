@@ -9,6 +9,7 @@ import {
 	ScrollView,
 	TouchableOpacity,
 } from "react-native";
+import StatusBarHead from "../components/StatusBarHead";
 import { client } from "../lib/contentful";
 
 const ExploreScreen = ({ navigation }: any) => {
@@ -36,6 +37,7 @@ const ExploreScreen = ({ navigation }: any) => {
 
 	return (
 		<View style={styles.container}>
+			<StatusBarHead />
 			<TextInput
 				onChangeText={(search) => setSearch(search)}
 				style={styles.searchBar}
@@ -54,6 +56,7 @@ const ExploreScreen = ({ navigation }: any) => {
 						key={index}
 					>
 						<Text style={styles.itemText}>{listItem.fields.title}</Text>
+						<View style={styles.separator}></View>
 					</TouchableOpacity>
 				))}
 			</ScrollView>
@@ -69,23 +72,28 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 	searchBar: {
-		fontSize: 19,
+		fontSize: 17,
 		margin: 10,
 		width: "90%",
-		height: 50,
+		// height: 50,
 		backgroundColor: "#F1F0F1",
+		borderRadius: 12,
 	},
 	itemTextContainer: {
 		width: `100%`,
-		backgroundColor: "#1E2E46",
-		borderRadius: 12,
 		marginTop: 20,
+
+		marginBottom: 5,
+	},
+	separator: {
 		padding: 12,
+		borderBottomColor: "#c4bfbe",
+		borderBottomWidth: 1,
 	},
 	itemText: {
 		textAlign: "center",
-		fontSize: 19,
-		color: "#fff",
+		fontSize: 17,
+		color: "#000",
 	},
 });
 

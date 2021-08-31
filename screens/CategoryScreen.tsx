@@ -7,6 +7,7 @@ import {
 	Image,
 	ScrollView,
 } from "react-native";
+import StatusBarHead from "../components/StatusBarHead";
 
 import { client } from "../lib/contentful";
 import { formatedDate } from "../lib/date";
@@ -30,6 +31,7 @@ const CategoryScreen = ({ navigation, route }: any) => {
 
 	return (
 		<ScrollView>
+			<StatusBarHead />
 			<View style={styles.container}>
 				{blog.map((item: any) => (
 					<TouchableOpacity

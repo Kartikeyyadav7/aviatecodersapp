@@ -8,6 +8,8 @@ import {
 	ViewStyle,
 	Image,
 	Dimensions,
+	SafeAreaView,
+	ScrollView,
 } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import auth from "@react-native-firebase/auth";
@@ -15,8 +17,10 @@ import { AuthNavProps } from "../types/AuthParamList";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { AccessToken, LoginManager } from "react-native-fbsdk-next";
 import firestore from "@react-native-firebase/firestore";
+import StatusBarHead from "../components/StatusBarHead";
 
 //TODO : If the user directly goes to the login section and does login with google then we have to redirect to the user to go the signup page first to make an account and then login or else it may cause problems
+//TODO: Check if the user already exists then throw error
 
 const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 	const [data, setdata] = useState({
@@ -168,7 +172,12 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 	};
 
 	return (
-		<View style={styles.container}>
+		<ScrollView
+			showsVerticalScrollIndicator={false}
+			contentContainerStyle={styles.container}
+		>
+			<StatusBarHead />
+			{/* <View style={styles.container}> */}
 			<View style={styles.header}>
 				<Image source={require("../assets/logo.png")} style={styles.logo} />
 				<Text style={styles.logoText}>Aviate Coders </Text>
@@ -226,7 +235,8 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 					<Text style={styles.redirectTextLink}>Login</Text>
 				</TouchableOpacity>
 			</View>
-		</View>
+			{/* </View> */}
+		</ScrollView>
 	);
 };
 
@@ -253,9 +263,11 @@ const height_logo = height * 0.1;
 
 const styles = StyleSheet.create<Styles>({
 	container: {
-		flex: 1,
-		alignItems: "center",
 		justifyContent: "center",
+		alignItems: "center",
+		padding: 5,
+		paddingTop: 50,
+		// backgroundColor: "#fff",
 	},
 	logo: {
 		height: height_logo * 0.6,
@@ -280,7 +292,8 @@ const styles = StyleSheet.create<Styles>({
 		borderRadius: 12,
 		backgroundColor: "#ffffff",
 		padding: 10,
-		shadowColor: "rgba(0, 0, 0, 0.1)",
+		shadowColor: "rgba(22, 15, 19, 0.9)",
+		// shadowColor: "rgba(0, 0, 0, 0.1)",
 		shadowOpacity: 0.5,
 		elevation: 10,
 		shadowRadius: 20,
@@ -345,17 +358,20 @@ const styles = StyleSheet.create<Styles>({
 		fontSize: 18,
 		fontFamily: `Adamina-Regular`,
 		color: "black",
+		textAlign: "center",
+		paddingRight: 5,
 	},
 	redirectTextLink: {
 		fontFamily: `Adamina-Regular`,
 		fontSize: 18,
 		color: "purple",
+		paddingLeft: 1,
 	},
 	row: {
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
-		width: "70%",
+		// width: "70%",
 	},
 });
 

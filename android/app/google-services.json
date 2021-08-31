@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "117683662084-iucvlg2ag7m6ltdko37bsu5n7dqusqqi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aviatecodersappv1",
+            "certificate_hash": "d55166038f1ae117fcd2becc0805f399995d18a2"
+          }
+        },
+        {
           "client_id": "117683662084-s4b3j3be99981sm7fsnrk17nbaihsjcc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
