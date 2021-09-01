@@ -162,7 +162,7 @@ const BlogScreen = ({ route }: any) => {
 
 	return (
 		<Root>
-			<View>
+			<View style={{ backgroundColor: "#fff" }}>
 				<StatusBarHead />
 				{blog.fields ? (
 					<ScrollView showsVerticalScrollIndicator={false}>

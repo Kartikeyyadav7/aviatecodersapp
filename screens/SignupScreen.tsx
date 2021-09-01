@@ -241,17 +241,27 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 				<TextInput
 					style={styles.input}
 					placeholder="Name"
+					placeholderTextColor="#ACA6A7"
 					onChangeText={(val) => nameInputChange(val)}
 				/>
+
 				<TextInput
+					ref={(ref) =>
+						ref &&
+						ref.setNativeProps({
+							style: { fontFamily: "Adamina-Regular" },
+						})
+					}
 					style={styles.input}
 					placeholder="Password"
-					// secureTextEntry={true}
-					autoCapitalize="none"
+					placeholderTextColor="#ACA6A7"
+					secureTextEntry={true}
+					value={data.password}
 					onChangeText={(val) => handlePasswordChange(val)}
 				/>
 				<TextInput
 					style={styles.input}
+					placeholderTextColor="#ACA6A7"
 					placeholder="Email"
 					onChangeText={(val) => emailInputChange(val)}
 				/>

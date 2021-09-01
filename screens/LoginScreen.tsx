@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { TextInput, TextStyle, TouchableOpacity } from "react-native";
 import { ImageStyle } from "react-native";
 import {
@@ -161,15 +161,33 @@ const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
 				</View>
 				<TextInput
 					style={styles.input}
-					placeholder="Email"
+					placeholder={"Email"}
+					secureTextEntry={false}
+					placeholderTextColor="#ACA6A7"
 					onChangeText={(val) => emailInputChange(val)}
 				/>
+				{/* <TextInput
+					style={styles.input}
+					placeholder={"Password"}
+					secureTextEntry={true}
+					placeholderTextColor="#ACA6A7"
+					autoCapitalize="none"
+					// ref={inputElementRef}
+					onChangeText={(val) => handlePasswordChange(val)}
+				/> */}
 				<TextInput
+					ref={(ref) =>
+						ref &&
+						ref.setNativeProps({
+							// text: ref.props.value,
+							style: { fontFamily: "Adamina-Regular" },
+						})
+					}
 					style={styles.input}
 					placeholder="Password"
-					// secureTextEntry={true}
-
-					autoCapitalize="none"
+					placeholderTextColor="grey"
+					secureTextEntry={true}
+					value={data.password}
 					onChangeText={(val) => handlePasswordChange(val)}
 				/>
 
@@ -275,6 +293,7 @@ const styles = StyleSheet.create<Styles>({
 		width: "80%",
 		fontSize: 16,
 		fontFamily: "Adamina-Regular",
+		// fontFamily: "Helvetica",
 		borderRadius: 12,
 		backgroundColor: "#ffffff",
 		padding: 15,
