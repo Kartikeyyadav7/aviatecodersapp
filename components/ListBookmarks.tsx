@@ -78,6 +78,8 @@ const ListBookmarks = ({ navigation, id }: any) => {
 		</View>
 	);
 };
+const { height } = Dimensions.get("screen");
+const height_logo = height * 0.1;
 
 const styles = StyleSheet.create({
 	container: {
@@ -120,16 +122,17 @@ const styles = StyleSheet.create({
 	},
 
 	cardImage: {
-		height: 150,
 		width: undefined,
+		height: height_logo * 2.5,
 		marginTop: 15,
 	},
 	title: {
-		fontSize: 18,
+		fontSize: 19,
 		color: "#000",
+		fontFamily: "SourceSerifPro-SemiBold",
 	},
 	description: {
-		fontSize: 15,
+		fontSize: 16,
 		borderTopLeftRadius: 1,
 		borderTopRightRadius: 1,
 		flexDirection: "row",
@@ -140,12 +143,14 @@ const styles = StyleSheet.create({
 		marginTop: 5,
 		marginBottom: 5,
 		width: undefined,
+		fontFamily: "SourceSerifPro-Regular",
 	},
 	time: {
-		fontSize: 13,
+		fontSize: 14,
 		color: "#808080",
 		// color: "#000",
 		marginTop: 5,
+		fontFamily: "SourceSerifPro-Regular",
 	},
 
 	timeContainer: {

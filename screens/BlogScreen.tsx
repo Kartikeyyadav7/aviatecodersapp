@@ -57,6 +57,9 @@ const BlogScreen = ({ route }: any) => {
 									title: "Bookmark Added",
 									iconEnabled: false,
 									timing: 2000,
+									titleTextStyle: {
+										fontFamily: "SourceSerifPro-Regular",
+									},
 									buttonEnabled: false,
 									confirmText: false,
 									modalContainerStyle: {
@@ -158,7 +161,15 @@ const BlogScreen = ({ route }: any) => {
 			.catch((error) => console.log(error));
 	};
 
-	useEffect(() => checkIfBookmarkExists(), []);
+	useEffect(() => {
+		let mounted = true;
+		if (mounted) {
+			checkIfBookmarkExists();
+		}
+		return () => {
+			mounted = false;
+		};
+	}, []);
 
 	return (
 		<Root>
@@ -201,7 +212,12 @@ const BlogScreen = ({ route }: any) => {
 							<View style={styles.blog}>
 								<Markdown
 									style={{
-										body: { color: "#000", fontSize: 15 },
+										body: {
+											color: "#000",
+											fontSize: 16,
+											fontFamily: "SourceSerifPro-Regular",
+											lineHeight: 20,
+										},
 										// heading1: {color: 'purple'},
 										code_block: {
 											backgroundColor: "#000",
@@ -231,7 +247,8 @@ const BlogScreen = ({ route }: any) => {
 		</Root>
 	);
 };
-
+const { height } = Dimensions.get("screen");
+const height_logo = height * 0.1;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -241,8 +258,9 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		color: "#000",
-		fontSize: 19,
-		fontWeight: "700",
+		fontSize: 20,
+		// fontWeight: "700",
+		fontFamily: "SourceSerifPro-SemiBold",
 	},
 	attributeContainer: {
 		flexDirection: "row",
@@ -251,11 +269,12 @@ const styles = StyleSheet.create({
 	},
 	attribute: {
 		flexDirection: "row",
-
 		marginTop: 6,
 	},
 	author: {
 		color: "#000",
+		fontSize: 15,
+		fontFamily: "SourceSerifPro-Regular",
 	},
 	separator: {
 		marginTop: 10,
@@ -270,8 +289,8 @@ const styles = StyleSheet.create({
 		marginTop: 2,
 	},
 	cardImage: {
-		height: 150,
 		width: undefined,
+		height: height_logo * 2.5,
 		marginTop: 15,
 	},
 });

@@ -42,6 +42,7 @@ const ExploreScreen = ({ navigation }: any) => {
 				onChangeText={(search) => setSearch(search)}
 				style={styles.searchBar}
 				placeholder=" Search Here"
+				placeholderTextColor="#ACA6A7"
 			/>
 			<ScrollView showsVerticalScrollIndicator={false}>
 				{filterList(blog).map((listItem: any, index: any) => (
@@ -76,8 +77,10 @@ const styles = StyleSheet.create({
 		margin: 10,
 		width: "90%",
 		// height: 50,
+		fontFamily: "SourceSerifPro-Regular",
 		backgroundColor: "#F1F0F1",
 		borderRadius: 12,
+		color: "#000",
 	},
 	itemTextContainer: {
 		width: `100%`,
@@ -92,8 +95,9 @@ const styles = StyleSheet.create({
 	},
 	itemText: {
 		textAlign: "center",
-		fontSize: 17,
+		fontSize: 18,
 		color: "#000",
+		fontFamily: "SourceSerifPro-Regular",
 	},
 });
 

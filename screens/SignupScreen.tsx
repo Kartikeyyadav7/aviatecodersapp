@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { TextInput, TextStyle, TouchableOpacity } from "react-native";
 import { ImageStyle } from "react-native";
 import {
@@ -10,6 +10,7 @@ import {
 	Dimensions,
 	SafeAreaView,
 	ScrollView,
+	ActivityIndicator,
 } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import auth from "@react-native-firebase/auth";
@@ -19,10 +20,17 @@ import { AccessToken, LoginManager } from "react-native-fbsdk-next";
 import firestore from "@react-native-firebase/firestore";
 import StatusBarHead from "../components/StatusBarHead";
 import { Root, Popup } from "react-native-popup-confirm-toast";
+import { context } from "../state";
 
-//TODO: Check if the user already exists then throw error
+//* Rather than telling the user to go the login page and login if there account already exists what I can do is check if the user already exists and then log him in into the same account
+//* Same can be done with the login feature as well if the user has never make and account then we can check that and make an account or else what we can do is if he already exists then log him in directly without making an account
 
 const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
+	const { state } = useContext(context);
+	const userId = state.user?.uid;
+
+	const [loading, setLoading] = useState(false);
+
 	const [data, setdata] = useState({
 		name: "",
 		email: "",
@@ -74,10 +82,6 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 							bookmarks: [],
 						})
 						.catch((error) => {
-							// console.log(
-							// 	"Something went wrong with added user to firestore: ",
-							// 	error
-							// );
 							Popup.show({
 								type: "warning",
 								title: "Error creating account",
@@ -103,6 +107,7 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 
 	const googleSignup = async () => {
 		try {
+			setLoading(true);
 			const { idToken } = await GoogleSignin.signIn();
 
 			const userGoogleDetails = await GoogleSignin.getCurrentUser();
@@ -119,6 +124,7 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 					});
 
 					if (existingUserEmail.includes(userGoogleDetails?.user.email)) {
+						setLoading(false);
 						Popup.show({
 							type: "warning",
 							title: "Account already exists , please login",
@@ -141,6 +147,10 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 										userImg: auth().currentUser?.photoURL,
 										bookmarks: [],
 									})
+									.then(() => {
+										setLoading(false);
+									})
+
 									.catch((error) => {
 										console.log(
 											"Something went wrong with added user to firestore: ",
@@ -206,84 +216,99 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 			console.log(error);
 		}
 	};
+	const deviceHeight = Dimensions.get("window").height;
+	const deviceWidth = Dimensions.get("window").width;
 
 	return (
 		<Root>
-			<ScrollView
-				showsVerticalScrollIndicator={false}
-				contentContainerStyle={styles.container}
-			>
-				<StatusBarHead />
-				{/* <View style={styles.container}> */}
-				<View style={styles.header}>
-					<Image source={require("../assets/logo.png")} style={styles.logo} />
-					<Text style={styles.logoText}>Aviate Coders </Text>
-				</View>
-
-				<Text style={styles.mainText}>Become An Aviated Coder</Text>
-				<View style={styles.buttonContainer}>
-					<TouchableOpacity
-						onPress={() => googleSignup()}
-						style={styles.googleButton}
-					>
-						<Image
-							source={require("../assets/google.png")}
-							style={styles.googleIcon}
-						/>
-					</TouchableOpacity>
-					<TouchableOpacity
-						onPress={() => fbSignup()}
-						style={styles.googleButton}
-					>
-						<FontAwesome name="facebook" size={24} color="#4866AB" />
-					</TouchableOpacity>
-				</View>
-				<TextInput
-					style={styles.input}
-					placeholder="Name"
-					placeholderTextColor="#ACA6A7"
-					onChangeText={(val) => nameInputChange(val)}
+			{loading ? (
+				<ActivityIndicator
+					style={{
+						height: deviceHeight,
+						width: deviceWidth,
+						alignItems: "center",
+						justifyContent: "center",
+					}}
+					size="large"
+					color="black"
 				/>
-
-				<TextInput
-					ref={(ref) =>
-						ref &&
-						ref.setNativeProps({
-							style: { fontFamily: "Adamina-Regular" },
-						})
-					}
-					style={styles.input}
-					placeholder="Password"
-					placeholderTextColor="#ACA6A7"
-					secureTextEntry={true}
-					value={data.password}
-					onChangeText={(val) => handlePasswordChange(val)}
-				/>
-				<TextInput
-					style={styles.input}
-					placeholderTextColor="#ACA6A7"
-					placeholder="Email"
-					onChangeText={(val) => emailInputChange(val)}
-				/>
-				<TouchableOpacity
-					style={styles.signupButton}
-					onPress={() => register(data.email, data.password)}
+			) : (
+				<ScrollView
+					showsVerticalScrollIndicator={false}
+					contentContainerStyle={styles.container}
 				>
-					<Text style={styles.btnText}>Sign up</Text>
-				</TouchableOpacity>
-				<View style={styles.divider} />
-				<View style={styles.row}>
-					<Text style={styles.redirectText}>Already have an account?</Text>
+					<StatusBarHead />
+					{/* <View style={styles.container}> */}
+					<View style={styles.header}>
+						<Image source={require("../assets/logo.png")} style={styles.logo} />
+						<Text style={styles.logoText}>Aviate Coders </Text>
+					</View>
+
+					<Text style={styles.mainText}>Become An Aviated Coder</Text>
+					<View style={styles.buttonContainer}>
+						<TouchableOpacity
+							onPress={() => googleSignup()}
+							style={styles.googleButton}
+						>
+							<Image
+								source={require("../assets/google.png")}
+								style={styles.googleIcon}
+							/>
+						</TouchableOpacity>
+						<TouchableOpacity
+							onPress={() => fbSignup()}
+							style={styles.googleButton}
+						>
+							<FontAwesome name="facebook" size={24} color="#4866AB" />
+						</TouchableOpacity>
+					</View>
+					<TextInput
+						style={styles.input}
+						placeholder="Name"
+						placeholderTextColor="#ACA6A7"
+						onChangeText={(val) => nameInputChange(val)}
+					/>
+
+					<TextInput
+						ref={(ref) =>
+							ref &&
+							ref.setNativeProps({
+								style: { fontFamily: "Adamina-Regular" },
+							})
+						}
+						style={styles.input}
+						placeholder="Password"
+						placeholderTextColor="#ACA6A7"
+						secureTextEntry={true}
+						value={data.password}
+						onChangeText={(val) => handlePasswordChange(val)}
+					/>
+					<TextInput
+						style={styles.input}
+						placeholderTextColor="#ACA6A7"
+						placeholder="Email"
+						onChangeText={(val) => emailInputChange(val)}
+					/>
 					<TouchableOpacity
-						onPress={() => {
-							navigation.navigate("LoginScreen");
-						}}
+						style={styles.signupButton}
+						onPress={() => register(data.email, data.password)}
 					>
-						<Text style={styles.redirectTextLink}>Login</Text>
+						<Text style={styles.btnText}>Sign up</Text>
 					</TouchableOpacity>
-				</View>
-				{/* </View> */}
-			</ScrollView>
+					<View style={styles.divider} />
+					<View style={styles.row}>
+						<Text style={styles.redirectText}>Already have an account?</Text>
+						<TouchableOpacity
+							onPress={() => {
+								navigation.navigate("LoginScreen");
+							}}
+						>
+							<Text style={styles.redirectTextLink}>Login</Text>
+						</TouchableOpacity>
+					</View>
+					{/* </View> */}
+				</ScrollView>
+			)}
 		</Root>
 	);
 };
@@ -341,7 +366,7 @@ const styles = StyleSheet.create<Styles>({
 		backgroundColor: "#ffffff",
 		padding: 10,
 		shadowColor: "rgba(22, 15, 19, 0.9)",
-		// shadowColor: "rgba(0, 0, 0, 0.1)",
+
 		shadowOpacity: 0.5,
 		elevation: 10,
 		shadowRadius: 20,

@@ -12,6 +12,16 @@ import {
 const Tab = createMaterialBottomTabNavigator();
 
 function AppStack() {
+	const getTabBarVisibility = (route: any) => {
+		const routeName = route.state
+			? route.state.routes[route.state.index].name
+			: "";
+
+		if (routeName === "Blog") {
+			return false;
+		}
+		return true;
+	};
 	return (
 		<Tab.Navigator
 			initialRouteName="HomeScreen"
@@ -30,13 +40,14 @@ function AppStack() {
 			<Tab.Screen
 				name="HomeScreen"
 				component={HomeScreenNavigator}
-				options={{
+				options={({ route }) => ({
+					//? The feature of tab bar visibility is not available in react native material bottom tabs navigator
+					// tabBarVisible: getTabBarVisibility(route),
 					tabBarLabel: "Home",
 					tabBarIcon: ({ color }) => (
 						<MaterialIcons name="home" color={color} size={26} />
 					),
-					title: "Home",
-				}}
+				})}
 			/>
 			<Tab.Screen
 				name="ExploreScreen"

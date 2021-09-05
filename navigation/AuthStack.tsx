@@ -23,20 +23,8 @@ const AuthStack: React.FC<AuthStackProps> = ({}) => {
 			}}
 			initialRouteName="SignupScreen"
 		>
-			<Stack.Screen
-				// options={{
-				//   headerTitle: "Sign In"
-				// }}
-				name="LoginScreen"
-				component={LoginScreen}
-			/>
-			<Stack.Screen
-				// options={{
-				//   headerTitle: "Sign Up"
-				// }}
-				name="SignupScreen"
-				component={SignupScreen}
-			/>
+			<Stack.Screen name="LoginScreen" component={LoginScreen} />
+			<Stack.Screen name="SignupScreen" component={SignupScreen} />
 		</Stack.Navigator>
 	);
 };

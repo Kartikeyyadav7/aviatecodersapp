@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { TextInput, TextStyle, TouchableOpacity } from "react-native";
 import { ImageStyle } from "react-native";
 import {
@@ -8,7 +8,6 @@ import {
 	ViewStyle,
 	Image,
 	Dimensions,
-	SafeAreaView,
 	ScrollView,
 } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -20,8 +19,11 @@ import StatusBarHead from "../components/StatusBarHead";
 import { Root, Popup } from "react-native-popup-confirm-toast";
 
 import firestore from "@react-native-firebase/firestore";
+import { ActivityIndicator } from "react-native-paper";
 
 const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
+	const [loading, setLoading] = useState(false);
+
 	const [data, setdata] = useState({
 		email: "",
 		password: "",
@@ -66,6 +68,7 @@ const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
 	const googleSignin = async () => {
 		try {
 			// Get the users ID token
+			setLoading(true);
 			const { idToken } = await GoogleSignin.signIn();
 			const userGoogleDetails = await GoogleSignin.getCurrentUser();
 
@@ -81,8 +84,10 @@ const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
 					});
 
 					if (existingUserEmail.includes(userGoogleDetails?.user.email)) {
+						setLoading(false);
 						return auth().signInWithCredential(googleCredential);
 					} else {
+						setLoading(false);
 						Popup.show({
 							type: "warning",
 							title: "Account does not exists, please sign up first",
@@ -129,44 +134,58 @@ const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
 			console.log(error);
 		}
 	};
-
+	const deviceHeight = Dimensions.get("window").height;
+	const deviceWidth = Dimensions.get("window").width;
+	// console.log("loading" + loading);
 	return (
 		<Root>
-			<ScrollView
-				showsVerticalScrollIndicator={false}
-				contentContainerStyle={styles.container}
-			>
-				<StatusBarHead />
-				<View style={styles.header}>
-					<Image source={require("../assets/logo.png")} style={styles.logo} />
-					<Text style={styles.logoText}>Aviate Coders </Text>
-				</View>
-				<Text style={styles.mainText}>Welcome back</Text>
-				<View style={styles.buttonContainer}>
-					<TouchableOpacity
-						onPress={() => googleSignin()}
-						style={styles.googleButton}
-					>
-						<Image
-							source={require("../assets/google.png")}
-							style={styles.googleIcon}
-						/>
-					</TouchableOpacity>
-					<TouchableOpacity
-						onPress={() => fblogin()}
-						style={styles.googleButton}
-					>
-						<FontAwesome name="facebook" size={24} color="#4866AB" />
-					</TouchableOpacity>
-				</View>
-				<TextInput
-					style={styles.input}
-					placeholder={"Email"}
-					secureTextEntry={false}
-					placeholderTextColor="#ACA6A7"
-					onChangeText={(val) => emailInputChange(val)}
+			{loading ? (
+				<ActivityIndicator
+					style={{
+						height: deviceHeight,
+						width: deviceWidth,
+						alignItems: "center",
+						justifyContent: "center",
+					}}
+					size="large"
+					color="black"
 				/>
-				{/* <TextInput
+			) : (
+				<ScrollView
+					showsVerticalScrollIndicator={false}
+					contentContainerStyle={styles.container}
+				>
+					<StatusBarHead />
+					<View style={styles.header}>
+						<Image source={require("../assets/logo.png")} style={styles.logo} />
+						<Text style={styles.logoText}>Aviate Coders </Text>
+					</View>
+					<Text style={styles.mainText}>Welcome back</Text>
+					<View style={styles.buttonContainer}>
+						<TouchableOpacity
+							onPress={() => googleSignin()}
+							style={styles.googleButton}
+						>
+							<Image
+								source={require("../assets/google.png")}
+								style={styles.googleIcon}
+							/>
+						</TouchableOpacity>
+						<TouchableOpacity
+							onPress={() => fblogin()}
+							style={styles.googleButton}
+						>
+							<FontAwesome name="facebook" size={24} color="#4866AB" />
+						</TouchableOpacity>
+					</View>
+					<TextInput
+						style={styles.input}
+						placeholder={"Email"}
+						secureTextEntry={false}
+						placeholderTextColor="#ACA6A7"
+						onChangeText={(val) => emailInputChange(val)}
+					/>
+					{/* <TextInput
 					style={styles.input}
 					placeholder={"Password"}
 					secureTextEntry={true}
@@ -175,40 +194,41 @@ const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
 					// ref={inputElementRef}
 					onChangeText={(val) => handlePasswordChange(val)}
 				/> */}
-				<TextInput
-					ref={(ref) =>
-						ref &&
-						ref.setNativeProps({
-							// text: ref.props.value,
-							style: { fontFamily: "Adamina-Regular" },
-						})
-					}
-					style={styles.input}
-					placeholder="Password"
-					placeholderTextColor="grey"
-					secureTextEntry={true}
-					value={data.password}
-					onChangeText={(val) => handlePasswordChange(val)}
-				/>
+					<TextInput
+						ref={(ref) =>
+							ref &&
+							ref.setNativeProps({
+								// text: ref.props.value,
+								style: { fontFamily: "Adamina-Regular" },
+							})
+						}
+						style={styles.input}
+						placeholder="Password"
+						placeholderTextColor="grey"
+						secureTextEntry={true}
+						value={data.password}
+						onChangeText={(val) => handlePasswordChange(val)}
+					/>
 
-				<TouchableOpacity
-					onPress={() => login(data.email, data.password)}
-					style={styles.signupButton}
-				>
-					<Text style={[styles.btnText]}>Login</Text>
-				</TouchableOpacity>
-				<View style={styles.divider} />
-				<View style={styles.row}>
-					<Text style={styles.redirectText}>Don't have an account?</Text>
 					<TouchableOpacity
-						onPress={() => {
-							navigation.navigate("SignupScreen");
-						}}
+						onPress={() => login(data.email, data.password)}
+						style={styles.signupButton}
 					>
-						<Text style={[styles.redirectTextLink]}>Signup</Text>
+						<Text style={[styles.btnText]}>Login</Text>
 					</TouchableOpacity>
-				</View>
-			</ScrollView>
+					<View style={styles.divider} />
+					<View style={styles.row}>
+						<Text style={styles.redirectText}>Don't have an account?</Text>
+						<TouchableOpacity
+							onPress={() => {
+								navigation.navigate("SignupScreen");
+							}}
+						>
+							<Text style={[styles.redirectTextLink]}>Signup</Text>
+						</TouchableOpacity>
+					</View>
+				</ScrollView>
+			)}
 		</Root>
 	);
 };

@@ -39,12 +39,27 @@ const BookmarkScreen = ({ navigation }: any) => {
 	return (
 		<View style={styles.container}>
 			<ScrollView showsVerticalScrollIndicator={false}>
-				{/* <View style={styles.container}> */}
 				{bookmark ? (
 					<View>
-						{bookmark === [] ? (
-							<View>
-								<Text> No Bookmarks </Text>
+						{bookmark.length === 0 ? (
+							<View
+								style={{
+									height: deviceHeight,
+									width: deviceWidth,
+									alignItems: "center",
+									justifyContent: "center",
+								}}
+							>
+								<Text
+									style={{
+										color: "#000",
+										fontFamily: "SourceSerifPro-SemiBold",
+										fontSize: 17,
+									}}
+								>
+									{" "}
+									No Bookmarks{" "}
+								</Text>
 							</View>
 						) : (
 							bookmark
@@ -71,7 +86,8 @@ const BookmarkScreen = ({ navigation }: any) => {
 		</View>
 	);
 };
-
+const { height } = Dimensions.get("screen");
+const height_logo = height * 0.1;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -113,8 +129,8 @@ const styles = StyleSheet.create({
 	},
 
 	cardImage: {
-		height: 150,
 		width: undefined,
+		height: height_logo * 2.5,
 		marginTop: 15,
 	},
 	title: {

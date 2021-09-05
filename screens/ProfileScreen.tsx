@@ -6,11 +6,13 @@ import {
 	StyleSheet,
 	Text,
 	TouchableOpacity,
+	ScrollView,
 	View,
 } from "react-native";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { context } from "../state";
+
 import StatusBarHead from "../components/StatusBarHead";
 
 interface ProfileScreenProps {}
@@ -47,8 +49,15 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({}) => {
 	};
 
 	useEffect(() => {
-		profileDetails();
+		let mounted = true;
+		if (mounted) {
+			profileDetails();
+		}
+		return () => {
+			mounted = false;
+		};
 	}, []);
+
 	return (
 		<View style={styles.container}>
 			<StatusBarHead />
@@ -91,8 +100,8 @@ const styles = StyleSheet.create({
 		backgroundColor: "#fff",
 	},
 	redirectTextLink: {
-		fontFamily: `Adamina-Regular`,
-		fontSize: 18,
+		fontFamily: "SourceSerifPro-SemiBold",
+		fontSize: 19,
 		color: "purple",
 		alignItems: "center",
 		justifyContent: "center",
@@ -112,6 +121,7 @@ const styles = StyleSheet.create({
 		fontSize: 19,
 		textAlign: "center",
 		marginTop: 5,
+		fontFamily: "SourceSerifPro-SemiBold",
 	},
 });
 
