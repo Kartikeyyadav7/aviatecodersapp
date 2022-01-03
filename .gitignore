@@ -31,7 +31,7 @@ local.properties
 .env
 \android\app\gradle.properties
 *.hprof
-/android/java_pid12092.hprof
+android\java_pid12092.hprof
 
 # node.js
 #
