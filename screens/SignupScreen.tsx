@@ -68,6 +68,7 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 
 	const register = async (email: string, password: string) => {
 		try {
+			setLoading(true);
 			await auth()
 				.createUserWithEmailAndPassword(email, password)
 				.then(() => {
@@ -81,7 +82,11 @@ const SignupScreen = ({ navigation }: AuthNavProps<"SignupScreen">) => {
 							userImg: null,
 							bookmarks: [],
 						})
+						.then(() => {
+							setLoading(false);
+						})
 						.catch((error) => {
+							setLoading(false);
 							Popup.show({
 								type: "warning",
 								title: "Error creating account",

@@ -52,9 +52,16 @@ const LoginScreen = ({ navigation }: AuthNavProps<"LoginScreen">) => {
 
 	const login = async (email: string, password: string) => {
 		try {
-			await auth().signInWithEmailAndPassword(email, password);
+			setLoading(true);
+			await auth()
+				.signInWithEmailAndPassword(email, password)
+				.then(() => {
+					setLoading(false);
+				});
 		} catch (e) {
 			console.log(e);
+			setLoading(false);
+
 			Popup.show({
 				type: "warning",
 				title: "Email or password is wrong or you haven't signed in",
